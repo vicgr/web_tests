@@ -1,13 +1,12 @@
 from page_objects import PageObject, PageElement
 from pageobjects.page_groups import PageGroups
-from selenium import webdriver
+
 
 class PageLogin(PageObject):
     fieldUsername = PageElement(id_='username')
     fieldPassword = PageElement(id_='keys')
-
     buttonSubmit = PageElement(css='input[type="submit"]')
-    driver = ""
+    driver = "webdriver"
 
     def __init__(self,webdriver):
         self.driver = webdriver
@@ -20,8 +19,8 @@ class PageLogin(PageObject):
 
     def login_correctly(self, username, password):
         self.__login__(username, password)
-        return PageGroups()
+        return PageGroups(self.driver)
 
     def login_incorrectly(self, username, password):
         self.__login__(username, password)
-        return PageLogin()
+        return PageLogin(self.driver)
