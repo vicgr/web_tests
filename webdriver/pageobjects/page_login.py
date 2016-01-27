@@ -8,11 +8,17 @@ class PageLogin(PageObject):
     buttonSubmit = PageElement(css='input[type="submit"]')
     driver = "webdriver"
 
+    def _clear_fields_(self):
+        self.fieldPassword.clear()
+        self.fieldUsername.clear()
+
+
     def __init__(self,webdriver):
         self.driver = webdriver
         PageObject.__init__(self,webdriver)
 
     def __login__(self, username, password):
+        self._clear_fields_()
         self.fieldUsername = username
         self.fieldPassword = password
         self.buttonSubmit.click()
