@@ -6,13 +6,13 @@ import os
 import test_reporter
 
 
-check_loginfail= False
+check_login_fail= False
 check_login = False
 
-def test_1():
+def test_login():
 #    test_ff()
     test_ch()
-    end_Tests()
+    end_tests()
 
 def test_ff():
     driver = webdriver.Firefox()
@@ -21,8 +21,8 @@ def test_ff():
     driver.close()
 
 def test_ch():
-    chromepath = "/Users/Victor/works/storedsafe_webtests/chromedriver"
-    driver = webdriver.Chrome(executable_path=chromepath)
+    chrome_path = "/Users/Victor/works/storedsafe_webtests/chromedriver"
+    driver = webdriver.Chrome(executable_path=chrome_path)
     reporter.log_webdriver("chrome")
     test(driver)
     driver.close()
@@ -33,7 +33,7 @@ def test(driver):
     #driver = webdriver.Firefox()
     driver.get("https://t1.storedsafe.com/")
     page = loginfailtest(driver,page_login.PageLogin(driver), "a", "b")
-    if not check_loginfail:
+    if not check_login_fail:
         return
     u= str(input('username: '))
     p= str(input('password+yubikey: '))
@@ -50,8 +50,8 @@ def loginfailtest(driver, page, username, password):
         reporter.add_failure(1,"loginfailuretest","is at: "+driver.current_url,"expected to be at: https://t1.storedsafe.com/")
         return page
     reporter.add_success(1,"loginfailuretest","did not login")
-    global check_loginfail
-    check_loginfail= True
+    global check_login_fail
+    check_login_fail= True
     return page
 
 
@@ -69,11 +69,11 @@ def logintest(driver, page, username,password):
 
     return page
 
-def end_Tests():
+def end_tests():
     reporter.printreport()
 
 reporter = test_reporter.testreporter()
-test_1()
+test_login()
 #test_2()
 
 
