@@ -15,17 +15,26 @@ def test():
 
 def loginfailtest(driver, page, username, password):
     page = page_login.PageLogin.login_incorrectly(page, username, password)
-    assert str(driver.current_url) == 'https://t1.storedsafe.com/',"not at loginpage"
+    try:
+        assert str(driver.current_url) == 'https://t1.storedsafe.com/'
+    except AssertionError:
+        print 'Test failed: expected to reach login page. Is at '+driver.current_url
+        exit(1)
+
     print("test successful: incorrect login failed")
     return page
 
 
 def logintest(driver, page, username,password):
     page = page_login.PageLogin.login_correctly(page, username, password)
-    assert str(driver.current_url).startswith('https://t1.storedsafe.com/groups.php'),"not at groupspage"
+    try:
+        assert str(driver.current_url).startswith('https://t1.storedsafe.com/groups.php')
+    except AssertionError:
+        print 'Test failed: expected to reach vaultpage. Is at '+driver.current_url
+        print 'Could not login, exiting'
+        exit(1)
     print("test successful: logged in")
     return page
-
 
 
 test()
