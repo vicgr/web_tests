@@ -36,6 +36,9 @@ class TestError(testentry):
 class testreporter:
     testlist = []
 
+    def log_webdriver(self,driver):
+        self.testlist.append(["webdriver:"+driver])
+
     def add_success(self,testnr_,testname_,successentry_):
         self.testlist.append(TestSuccess(testnr_,testname_,successentry_).getentry())
 
@@ -43,6 +46,7 @@ class testreporter:
         self.testlist.append(TestError(testnr_,testname_,errorresult_,expectedresult_).getenry())
 
     def printreport(self):
+        print("TESTREPORT")
         for entry in self.testlist:
             for content in entry:
                 print("| "+str(content), end = ' ')

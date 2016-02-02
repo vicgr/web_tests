@@ -2,29 +2,44 @@
 from pageobjects import page_login
 from selenium import webdriver
 import sys
+import os
 import test_reporter
 
 
 check_loginfail= False
 check_login = False
 
-def test():
+def test_1():
+#    test_ff()
+    test_ch()
+    end_Tests()
 
+def test_ff():
     driver = webdriver.Firefox()
+    reporter.log_webdriver("firefox")
+    test(driver)
+    driver.close()
+
+def test_ch():
+    chromepath = "/Users/Victor/works/storedsafe_webtests/chromedriver"
+    driver = webdriver.Chrome(executable_path=chromepath)
+    reporter.log_webdriver("chrome")
+    test(driver)
+    driver.close()
+
+
+def test(driver):
+
+    #driver = webdriver.Firefox()
     driver.get("https://t1.storedsafe.com/")
     page = loginfailtest(driver,page_login.PageLogin(driver), "a", "b")
     if not check_loginfail:
-        end_Tests()
-        exit(1)
+        return
     u= str(input('username: '))
     p= str(input('password+yubikey: '))
     page = logintest(driver,page,u,p)
     if not check_login:
-        end_Tests()
-        exit(1)
-
-    print(check_loginfail +""+check_login)
-    end_Tests()
+        return
 
 
 def loginfailtest(driver, page, username, password):
@@ -58,7 +73,7 @@ def end_Tests():
     reporter.printreport()
 
 reporter = test_reporter.testreporter()
-
-test()
+test_1()
+#test_2()
 
 
