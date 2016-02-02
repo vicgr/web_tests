@@ -30,3 +30,5 @@ class PageLogin(PageObject):
     def login_incorrectly(self, username, password):
         self.__login__(username, password)
         return PageLogin(self.driver)
+
+    #def verify_on_login_page(self):
