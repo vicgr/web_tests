@@ -25,7 +25,10 @@ def test_ch():
     driver = webdriver.Chrome(executable_path=chrome_path)
     run_tests(driver)
 
-
+#FOR IE-TESTING TO WORK:
+# protected mode must be set to off (I think?) for all zones
+# = kernel-läge måste vara avstängt för all zoner
+#http://jimevansmusic.blogspot.se/2012/08/youre-doing-it-wrong-protected-mode-and.html
 def test_ie():
     ie_path = constants.path_base+constants.path_ie_exc
     driver = webdriver.Ie(executable_path = ie_path)
