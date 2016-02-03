@@ -11,3 +11,11 @@ url_vault = "groups.php"
 
 #text and other assorted constants
 text_loginbutton = "Login to Storedsafe"
+
+#Check-values that are necessary for ensuring that the tests can continue
+check_login = False
+check_login_fail = False
+
+def reset_all_checks():
+    check_login = False
+    check_login_fail = False

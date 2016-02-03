@@ -33,6 +33,8 @@ class TestError(testentry):
         return [self.testnr,self.testname,self.type,self.expectedresult,self.result]
 
 
+#Super-simple testreport generator. #Uses the testentry subclasses to generate a report
+#TODO: make better
 class testreporter:
     testlist = []
 

@@ -1,6 +1,6 @@
 from selenium import webdriver
 from test_reporter import testreporter
-import login
+import test_login
 
 
 def run():

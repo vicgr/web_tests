@@ -1,8 +1,6 @@
 from page_objects import PageObject, PageElement
-from pageobjects.page_vaults import PageGroups
-from selenium import webdriver
-from selenium.webdriver.common import keys
-import storedsafe_driver_constants as constants
+from pageobjects.page_vaults import PageVaults
+import storedsafe_driver_values as constants
 
 class PageLogin(PageObject):
     fieldUsername = PageElement(id_='username')
@@ -27,7 +25,7 @@ class PageLogin(PageObject):
 
     def login_correctly(self, username, password):
         self.__login__(username, password)
-        return PageGroups(self.driver)
+        return PageVaults(self.driver)
 
     def login_incorrectly(self, username, password):
         self.__login__(username, password)
