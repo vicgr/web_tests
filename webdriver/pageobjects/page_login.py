@@ -1,6 +1,7 @@
 from page_objects import PageObject, PageElement
 from pageobjects.page_groups import PageGroups
-
+from selenium import webdriver
+from selenium.webdriver.common import keys
 
 class PageLogin(PageObject):
     fieldUsername = PageElement(id_='username')
@@ -30,4 +31,9 @@ class PageLogin(PageObject):
         self.__login__(username, password)
         return PageLogin(self.driver)
 
-    #def verify_on_login_page(self):
+    def verify_on_login_page(self):
+        return self.buttonSubmit.get_attribute("value") == "Login to Storedsafe" and \
+            self.driver.current_url =='https://t1.storedsafe.com/'
+
+
+

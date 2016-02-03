@@ -1,8 +1,6 @@
 "from web_test import WebTest"
 from pageobjects import page_login
 from selenium import webdriver
-import sys
-import os
 import test_reporter
 
 
@@ -10,42 +8,48 @@ check_login_fail= False
 check_login = False
 
 def test_login():
-    #test_ff()
-    #test_ch()
+    test_ff()
+    test_ch()
     test_ie()
     end_tests()
 
 
 def test_ff():
     driver = webdriver.Firefox()
-    reporter.log_webdriver("firefox")
-    test(driver)
-    driver.close()
+    run_tests(driver)
 
 
 def test_ch():
     chrome_path = "/Users/Victor/works/storedsafe_webtests/chromedriver"
     driver = webdriver.Chrome(executable_path=chrome_path)
-    reporter.log_webdriver("chrome")
-    test(driver)
-    driver.close()
+    run_tests(driver)
 
 
 def test_ie():
     ie_path = "/Users/Victor/works/storedsafe_webtests/IEDriverServer"
     driver = webdriver.Ie(executable_path = ie_path)
-    reporter.log_webdriver("Internet Explorer")
+    run_tests(driver)
+
+def run_tests(driver):
+    reporter.log_webdriver(driver.name+", v."+driver.capabilities['version'])
     test(driver)
     driver.close()
 
-
 def test(driver):
     driver.get("https://t1.storedsafe.com/")
-    page = loginfailtest(driver,page_login.PageLogin(driver), "a", "b")
+    page = page_login.PageLogin(driver)
+
+    if page.verify_on_login_page() is False:
+        print("Warning: Something went wrong. Is not at the login page.")
+        quit(1)
+
+    print('is at loginpage. testing commencing')
+    page = loginfailtest(driver,page, "a", "b")
     if not check_login_fail:
         return
     u= str(input('username: '))
     p= str(input('password+yubikey: '))
+
     page = logintest(driver,page,u,p)
     if not check_login:
         return
@@ -54,7 +58,7 @@ def test(driver):
 def loginfailtest(driver, page, username, password):
     page = page_login.PageLogin.login_incorrectly(page, username, password)
     try:
-        assert str(driver.current_url) == 'https://t1.storedsafe.com/'
+        assert page.verify_on_login_page() is True
     except AssertionError:
         reporter.add_failure(1,"loginfailuretest","is at: "+driver.current_url,"expected to be at: https://t1.storedsafe.com/")
         return page
