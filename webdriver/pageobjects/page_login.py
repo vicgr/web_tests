@@ -1,13 +1,15 @@
 from page_objects import PageObject, PageElement
-from pageobjects.page_groups import PageGroups
+from pageobjects.page_vaults import PageGroups
 from selenium import webdriver
 from selenium.webdriver.common import keys
+import storedsafe_driver_constants as constants
 
 class PageLogin(PageObject):
     fieldUsername = PageElement(id_='username')
     fieldPassword = PageElement(id_='keys')
     buttonSubmit = PageElement(css='input[type="submit"]')
     driver = "webdriver"
+
 
     def _clear_fields_(self):
         self.fieldPassword.clear()
@@ -32,8 +34,7 @@ class PageLogin(PageObject):
         return PageLogin(self.driver)
 
     def verify_on_login_page(self):
-        return self.buttonSubmit.get_attribute("value") == "Login to Storedsafe" and \
-            self.driver.current_url =='https://t1.storedsafe.com/'
-
+        return self.buttonSubmit.get_attribute("value") == constants.text_loginbutton and \
+               self.driver.current_url == constants.url_base
 
 
