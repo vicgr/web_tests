@@ -10,15 +10,18 @@ check_login_fail= False
 check_login = False
 
 def test_login():
-#    test_ff()
-    test_ch()
+    #test_ff()
+    #test_ch()
+    test_ie()
     end_tests()
+
 
 def test_ff():
     driver = webdriver.Firefox()
     reporter.log_webdriver("firefox")
     test(driver)
     driver.close()
+
 
 def test_ch():
     chrome_path = "/Users/Victor/works/storedsafe_webtests/chromedriver"
@@ -28,9 +31,15 @@ def test_ch():
     driver.close()
 
 
-def test(driver):
+def test_ie():
+    ie_path = "/Users/Victor/works/storedsafe_webtests/IEDriverServer"
+    driver = webdriver.Ie(executable_path = ie_path)
+    reporter.log_webdriver("Internet Explorer")
+    test(driver)
+    driver.close()
 
-    #driver = webdriver.Firefox()
+
+def test(driver):
     driver.get("https://t1.storedsafe.com/")
     page = loginfailtest(driver,page_login.PageLogin(driver), "a", "b")
     if not check_login_fail:
