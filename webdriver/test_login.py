@@ -1,4 +1,5 @@
 from pageobjects import page_login
+from pageobjects import page_vaults
 from selenium import webdriver
 import test_reporter
 import storedsafe_driver_values as constants
@@ -8,7 +9,10 @@ import storedsafe_driver_values as constants
 All login-related tests should be handled in this file
 '''
 
+
 class login_test:
+
+    # tests that logging in using wrong credentials do not work
     def loginfailtest(driver, page, reporter, username, password):
         page = page_login.PageLogin.login_incorrectly(page, username, password)
         try:
@@ -20,11 +24,10 @@ class login_test:
         constants.check_login_fail= True
         return page
 
-
+    # tests that logging in using correct credentials do work
     def logintest(driver, page, reporter, username, password):
         page = page_login.PageLogin.login_correctly(page, username, password)
         try:
-            #assert str(driver.current_url).startswith('https://t1.storedsafe.com/groups.php')
             assert page.verify_on_vaults_page() is True
         except AssertionError:
             reporter.add_failure(2,"logintest","is at: "+driver.current_url,"expected to be at: "+constants.url_base+constants.url_vault)
@@ -35,4 +38,12 @@ class login_test:
 
         return page
 
+
+    def logout(driver, page):
+        page = page_vaults.PageVaults.logout(page)
+        try:
+            assert  page.verify_on_login_page() is True
+        except AssertionError:
+            print("is at: " +driver.current_url)
+        return page
 

@@ -2,14 +2,24 @@ from pageobjects import page_login
 from selenium import webdriver
 import test_reporter
 import storedsafe_driver_values as constants
-from test_login import login_test as test_login
-#from test_login import loginfailtest,logintest
+from test_login import login_test
+import sys
 
 
 def selenium_testing():
-    test_ff()
-    test_ch()
-    test_ie()
+    tested = False
+    if sys.argv.__contains__('-ff'):
+        test_ff()
+        tested = True
+    if sys.argv.__contains__('-ch'):
+        test_ch()
+        tested = True
+    if sys.argv.__contains__('-ie'):
+        tested = True
+        test_ie()
+    if tested == False:
+        test_ff()
+
     end_tests()
 
 #Setup drivers
@@ -28,7 +38,7 @@ def test_ch():
 #FOR IE-TESTING TO WORK:
 # protected mode must be set to off (I think?) for all zones
 # = kernel-läge måste vara avstängt för all zoner
-#http://jimevansmusic.blogspot.se/2012/08/youre-doing-it-wrong-protected-mode-and.html
+#see: http://jimevansmusic.blogspot.se/2012/08/youre-doing-it-wrong-protected-mode-and.html
 def test_ie():
     ie_path = constants.path_base+constants.path_ie_exc
     driver = webdriver.Ie(executable_path = ie_path)
@@ -52,18 +62,21 @@ def test(driver):
         print("Warning: Something went wrong. Is not at the login page.")
         quit(1)
 
-    page = test_login.loginfailtest(driver,page, reporter, "a", "b")
-    if not constants.check_login_fail:
-        return
+    #page = login_test.loginfailtest(driver,page, reporter, "a", "b")
+    #if not constants.check_login_fail:
+    #    return
     u= str(input('username: '))
     p= str(input('password+yubikey: '))
 
-    page = test_login.logintest(driver, page, reporter, u, p)
-    if not constants.check_login:
-        return
+    page = login_test.logintest(driver, page, reporter, u, p)
+    #if not constants.check_login:
+    #    return
+    page = login_test.logout(driver,page)
+    print("logout")
 
 def end_tests():
     reporter.printreport()
 
 reporter = test_reporter.testreporter()
+
 selenium_testing()

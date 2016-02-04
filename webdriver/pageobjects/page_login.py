@@ -1,5 +1,6 @@
 from page_objects import PageObject, PageElement
-from pageobjects.page_vaults import PageVaults
+#from pageobjects.page_vaults import PageVaults
+import pageobjects.page_vaults as PageVaults
 import storedsafe_driver_values as constants
 
 class PageLogin(PageObject):
@@ -25,11 +26,12 @@ class PageLogin(PageObject):
 
     def login_correctly(self, username, password):
         self.__login__(username, password)
-        return PageVaults(self.driver)
+        return PageVaults.PageVaults(self.driver)
 
     def login_incorrectly(self, username, password):
         self.__login__(username, password)
-        return PageLogin(self.driver)
+        #return PageLogin(self.driver)
+        return self
 
     def verify_on_login_page(self):
         return self.buttonSubmit.get_attribute("value") == constants.text_loginbutton and \
