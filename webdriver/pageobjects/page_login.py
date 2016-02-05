@@ -7,8 +7,7 @@ class PageLogin(PageObject):
     fieldUsername = PageElement(id_='username')
     fieldPassword = PageElement(id_='keys')
     buttonSubmit = PageElement(css='input[type="submit"]')
-    driver = "webdriver"
-
+    driver = None
 
     def _clear_fields_(self):
         self.fieldPassword.clear()
@@ -30,11 +29,11 @@ class PageLogin(PageObject):
 
     def login_incorrectly(self, username, password):
         self.__login__(username, password)
-        #return PageLogin(self.driver)
         return self
 
     def verify_on_login_page(self):
         return self.buttonSubmit.get_attribute("value") == constants.text_loginbutton and \
-               self.driver.current_url == constants.url_base
+               (self.driver.current_url == constants.url_base or
+                self.driver.current_url == constants.url_base + constants.url_index)
 
 

@@ -39,11 +39,13 @@ class login_test:
         return page
 
 
-    def logout(driver, page):
+    def logout(driver, page,reporter):
         page = page_vaults.PageVaults.logout(page)
         try:
             assert  page.verify_on_login_page() is True
         except AssertionError:
-            print("is at: " +driver.current_url)
+            reporter.add_failure(3,"logouttest","is at: "+driver.current_url,"expected to be at: "+constants.url_base+constants.url_vault)
+            return page
+        reporter.add_success(3, "logouttest","correctly logged out, is at the login page")
         return page
 
