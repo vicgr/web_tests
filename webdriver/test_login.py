@@ -46,6 +46,12 @@ class login_test:
         except AssertionError:
             reporter.add_failure(3,"logouttest","is at: "+driver.current_url,"expected to be at: "+constants.url_base+constants.url_vault)
             return page
+        try:
+            driver.get(constants.url_base+constants.url_vault)
+            assert page.verify_on_login_page() is True
+        except AssertionError:
+            reporter.add_failure(3,"logouttest","is at: "+driver.current_url,"expected to not be logged in")
+            return page
         reporter.add_success(3, "logouttest","correctly logged out, is at the login page")
         return page
 
