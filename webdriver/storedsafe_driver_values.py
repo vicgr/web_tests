@@ -8,6 +8,7 @@ path_chrome_exec ="chromedriver"
 url_base = "https://t1.storedsafe.com/"
 url_login = ""
 url_vault = "groups.php"
+url_index = "index.php"
 
 #text and other assorted constants
 text_loginbutton = "Login to Storedsafe"

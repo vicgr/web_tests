@@ -17,7 +17,7 @@ def selenium_testing():
     if sys.argv.__contains__('-ie'):
         tested = True
         test_ie()
-    if tested == False:
+    if tested is False:
         test_ff()
 
     end_tests()
@@ -49,9 +49,10 @@ def test_ie():
 
 
 def run_tests(driver):
+    driver.implicitly_wait(3)
     reporter.log_webdriver(driver.name+", v."+driver.capabilities['version'])
     test(driver)
-    driver.close()
+    #driver.close()
 
 
 def test(driver):
@@ -62,21 +63,37 @@ def test(driver):
         print("Warning: Something went wrong. Is not at the login page.")
         quit(1)
 
-    #page = login_test.loginfailtest(driver,page, reporter, "a", "b")
+    page = login_test.loginfailtest(driver,page, reporter, "a", "b")
     #if not constants.check_login_fail:
     #    return
     u= str(input('username: '))
+    #u = 'vg'
     p= str(input('password+yubikey: '))
+    #p="test thing"+input('press yubikey:')
 
     page = login_test.logintest(driver, page, reporter, u, p)
     #if not constants.check_login:
     #    return
-    page = login_test.logout(driver,page)
-    print("logout")
+    page = login_test.logout(driver,page, reporter)
+
 
 def end_tests():
     reporter.printreport()
+    reporter.clear()
 
 reporter = test_reporter.testreporter()
 
-selenium_testing()
+#selenium_testing()
+
+def do_test():
+    if sys.argv.__contains__("-t"):
+        driver = webdriver.Firefox()
+        driver.implicitly_wait(3)
+        driver.get(constants.url_base)
+        page = login_test.logintest(driver,page_login.PageLogin(driver),reporter,"vg","test thing"+str(input('plz yubikey: ')))
+        page = login_test.logout(driver,page,reporter)
+        end_tests()
+    else:
+        selenium_testing()
+
+do_test()

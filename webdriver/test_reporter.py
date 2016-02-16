@@ -53,3 +53,6 @@ class testreporter:
             for content in entry:
                 print("| "+str(content), end = ' ')
             print ('\n')
+
+    def clear(self):
+        testlist = []
