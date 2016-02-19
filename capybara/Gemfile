@@ -3,4 +3,7 @@ source 'http://rubygems.org/'
 group :development, :test do
   gem 'capybara', :git => 'git://github.com/jnicklas/capybara.git'
   gem 'selenium-webdriver'
+  gem 'minitest'
+  #gem 'capybara-webkit'
+  gem 'poltergeist'
 end
