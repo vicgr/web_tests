@@ -1,8 +1,11 @@
+from db_handler import DB_handler
 
 #environment constants
 path_base = "/Users/Victor/works/storedsafe_webtests/" #TODO:edit to fit any environment
 path_ie_exc = "IEDriverServer"
 path_chrome_exec ="chromedriver"
+
+db_handler = DB_handler()
 
 #url constants
 url_base = "https://t1.storedsafe.com/"
@@ -16,6 +19,7 @@ text_loginbutton = "Login to Storedsafe"
 #Check-values that are necessary for ensuring that the tests can continue
 check_login = False
 check_login_fail = False
+
 
 def reset_all_checks():
     check_login = False

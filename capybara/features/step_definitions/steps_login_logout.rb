@@ -3,10 +3,7 @@ Given(/^I am on loginpage$/) do
 end
 
 When(/^I login with username "([^"]*)" and password "([^"]*)"$/) do |arg1, arg2|
-  a = gets
-  fill_in 'username', :with => arg1 + a
-  fill_in 'keys', :with => arg2
-  click_button 'savebutton'
+  Page_index.Login(arg1, arg2)
 end
 
 When(/^I logout$/) do

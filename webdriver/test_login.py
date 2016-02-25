@@ -3,6 +3,8 @@ from pageobjects import page_vaults
 from selenium import webdriver
 import test_reporter
 import storedsafe_driver_values as constants
+from db_handler import DB_handler
+
 #import web_test
 
 '''
@@ -26,6 +28,15 @@ class login_test:
 
     # tests that logging in using correct credentials do work
     def logintest(driver, page, reporter, username, password):
+
+        try:
+            assert constants.db_handler.active_user_with_username(username) == True
+        except:
+            reporter.add_failure(2,"logintest", "no active user with username " +username,"in database")
+            print (username+"? Never heard of'em")
+            #return page
+
+
         page = page_login.PageLogin.login_correctly(page, username, password)
         try:
             assert page.verify_on_vaults_page() is True

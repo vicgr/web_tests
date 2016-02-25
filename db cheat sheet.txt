@@ -1,0 +1,26 @@
+status:
+    objects and vaults: (?)
+        active = 128
+        inactive = 0
+
+    ss_groupkeys:
+        read = 1
+        write = 2
+        admin = 4
+
+    ss_userbase status:
+        ...
+
+    
+Object Templates:
+    0 = person
+    1 = server (host/ip)
+    2 = folder
+    3 = file
+    4 = login
+    5 = quicknote
+    6 = PKI
+    7 = certificate
+    8 = note
+    9 = pin
+

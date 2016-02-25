@@ -45,9 +45,6 @@ def test_ie():
     run_tests(driver)
 
 
-#Run tests
-
-
 def run_tests(driver):
     driver.implicitly_wait(3)
     reporter.log_webdriver(driver.name+", v."+driver.capabilities['version'])
@@ -63,9 +60,11 @@ def test(driver):
         print("Warning: Something went wrong. Is not at the login page.")
         quit(1)
 
+    print("_test1: logging in using NO USER_")
     page = login_test.loginfailtest(driver,page, reporter, "a", "b")
     #if not constants.check_login_fail:
     #    return
+    print("_test2: please enter credentials_")
     u= str(input('username: '))
     #u = 'vg'
     p= str(input('password+yubikey: '))

@@ -9,5 +9,8 @@ Given(/^I am on the "([^"]*)" page$/) do |arg1|
 end
 
 Then(/^I should see "([^"]*)"$/) do |arg1|
-  has_text?(arg1)
+
+  a = has_text?(arg1) ? "true" : "false"
+  puts "has " + arg1+"? " + a
+  assert has_text?(arg1)
 end
