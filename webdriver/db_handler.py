@@ -7,8 +7,8 @@ class db_executor(object):
 
         if a is None:
             a = input("please enter database password: ")
-            b
-            c
+            b = input("please enter host")
+            c = input("please enter database")
         self.connection = mysql.connector.connect(user='victor', host ='',database='',password = a)
         self.cursor = self.connection.cursor()
         self.update = True
