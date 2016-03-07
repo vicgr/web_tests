@@ -1,11 +1,6 @@
 from pageobjects import page_login
 from pageobjects import page_vaults
-from selenium import webdriver
-import test_reporter
 import storedsafe_driver_values as constants
-from db_handler import DB_handler
-
-#import web_test
 
 '''
 All login-related tests should be handled in this file
@@ -22,6 +17,13 @@ class login_test:
         except AssertionError:
             reporter.add_failure(1,"loginfailuretest","is at: "+driver.current_url,"expected to be at: "+constants.url_base+constants.url_login)
             return page
+        try:
+            assert constants.db_handler.expect_event_auth_failure()
+
+
+        except AssertionError:
+            reporter.add_failure(1,"loginfailuretest","","")
+            return page
         reporter.add_success(1,"loginfailuretest","did not login")
         constants.check_login_fail= True
         return page
@@ -33,15 +35,18 @@ class login_test:
             assert constants.db_handler.active_user_with_username(username) == True
         except:
             reporter.add_failure(2,"logintest", "no active user with username " +username,"in database")
-            print (username+"? Never heard of'em")
-            #return page
-
+            return page
 
         page = page_login.PageLogin.login_correctly(page, username, password)
         try:
             assert page.verify_on_vaults_page() is True
         except AssertionError:
             reporter.add_failure(2,"logintest","is at: "+driver.current_url,"expected to be at: "+constants.url_base+constants.url_vault)
+            return page
+        try:
+            assert constants.db_handler.expect_event_login(username)
+        except AssertionError:
+            reporter.add_failure(2,"logintest","no loginevent-found for "+username,"expected a login-event in the log")
             return page
 
         reporter.add_success(2,"logintest","correct login successful - logged in")

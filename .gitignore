@@ -3,3 +3,6 @@
 /**.pyc
 /webdriver/__pycache__/**
 logins and configs.txt
+/webdriver/db_tester.py
+/webdriver/.idea/**
+/webdriver/pageobjects/__pycache__/**

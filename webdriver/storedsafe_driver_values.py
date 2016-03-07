@@ -5,7 +5,7 @@ path_base = "/Users/Victor/works/storedsafe_webtests/" #TODO:edit to fit any env
 path_ie_exc = "IEDriverServer"
 path_chrome_exec ="chromedriver"
 
-db_handler = DB_handler()
+db_handler = DB_handler(None,True)
 
 #url constants
 url_base = "https://t1.storedsafe.com/"
