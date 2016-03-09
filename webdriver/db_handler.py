@@ -1,15 +1,20 @@
 import mysql.connector
 from db_objects import stored_user
 
+
 class db_executor(object):
 
-    def __init__(self, a, timed):
+    def __init__(self, p,h,d, u, timed):
 
-        if a is None:
-            a = input("please enter database password: ")
-            b = input("please enter host")
-            c = input("please enter database")
-        self.connection = mysql.connector.connect(user='victor', host ='',database='',password = a)
+        if p is None:
+            p = input("please enter database password: ")
+        if h is None:
+            h = input("please enter host: ")
+        if d is None:
+            d = input("please enter database: ")
+        if u is None:
+            u = input("please enter user: ")
+        self.connection = mysql.connector.connect(user=u, host =h,database=d,password = p)
         self.cursor = self.connection.cursor()
         self.update = True
         self.last_query = None
@@ -53,8 +58,8 @@ class DB_handler(object):
     db_exec = None
     db_log = None
 
-    def __init__(self, a = None, t = False):
-        self.db_exec = db_executor(a,t)
+    def __init__(self, p = None, h = None, d=None,u=None, t = False):
+        self.db_exec = db_executor(p,h,d,u,t)
 
 
     def action_performed(self):
@@ -75,8 +80,21 @@ class DB_handler(object):
         return False
 
     def get_user_with_username(self,username,is_active = True):
+        res = self.db_exec.execute_query("select * from ss_userbase where username ='"+username+"'")
 
-        return True
+        ret=[]
+        if not res:
+            return ret
+        for usr in res:
+            susr = stored_user(usr)
+            if is_active:
+                if susr.status.is_active():
+                    ret.append(susr)
+            elif not is_active:
+                if not susr.status.is_active():
+                    ret.append(susr)
+
+        return ret
 
     def expect_event_auth_failure(self): #any failed login?
         query ="select * from ss_log where event like '%AUTH FAILURE%'"

@@ -1,11 +1,6 @@
 import json
 
-class jsonable():
-    def to_JSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-            sort_keys=True, indent=4)
-
-class stored_user(jsonable):
+class stored_user():
 
     def compare(self,user):
         if self.id == user.id and \
@@ -20,22 +15,45 @@ class stored_user(jsonable):
         else:
             return False
 
-    def __init__(self,tup):
-        self.id = tup[0]
-        self.status = obj_status(tup[1])
-        self.username= tup[2]
-        self.fullname = tup[3]
-        self.email = tup[4]
-        self.otpprefix = tup[5]
-        self.clientid = tup[6]
-        self.fingerprint = tup[7]
+    def __init__(self,tup=None):
+        self.password = None
+        if tup is not None:
+            self.id = tup[0]
+            self.status = obj_status(tup[1])
+            self.username= tup[2]
+            self.fullname = tup[3]
+            self.email = tup[4]
+            self.otpprefix = tup[5]
+            self.clientid = tup[6]
+            self.fingerprint = tup[7]
+
+    def initWithJson(self,o):
+        self.id=o["id"]
+        self.status = o["status"]
+        self.username=o["username"]
+        self.fullname=o["fullname"]
+        self.email=o["email"]
+        self.otpprefix=o["otpprefix"]
+        self.clientid=o["clientid"]
+        self.fingerprint=o["fingerprint"]
+        self.password = o["password"]
+
+    def __dict__(self):
+
+        return dict(
+            __type__='User',id =self.id,username=self.username,fullname = self.fullname,email =self.email,
+            otpprefix = self.otpprefix, clientid = self.clientid, fingerprint = self.fingerprint,
+            status = self.status._get()
+        )
 
 
-class obj_status(jsonable):
 
-    def __init__(self,s):
-        self.status = bin(s)[2:]
-        self.status = "0"*(12-len(self.status))+self.status
+class obj_status():
+
+    def __init__(self,s=None):
+        if s is not None:
+            self.status = bin(s)[2:]
+            self.status = "0"*(12-len(self.status))+self.status
 
     def has_read(self):
         return self.status[11]=='1'
@@ -62,10 +80,13 @@ class obj_status(jsonable):
     def has_radius(self):
         return self.status[0]=='1'
     def _get(self):
-        return self.status
+        return ""+self.status
     def _set(self,s):
         self.status = bin(s)[2:]
         self.status = "0"*(12-len(self.status))+self.status
+
+    def fromjson(self,s):
+        self.status = s
 
     def compare(self,obj):
         return type(obj) == type(self) and self.status == obj.status

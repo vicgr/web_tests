@@ -6,3 +6,4 @@ logins and configs.txt
 /webdriver/db_tester.py
 /webdriver/.idea/**
 /webdriver/pageobjects/__pycache__/**
+safe_stored.txt

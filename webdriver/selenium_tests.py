@@ -32,6 +32,7 @@ def test_ff():
 
 def test_ch():
     chrome_path = constants.path_base+constants.path_chrome_exec
+    print(chrome_path)
     driver = webdriver.Chrome(executable_path=chrome_path)
     run_tests(driver)
 

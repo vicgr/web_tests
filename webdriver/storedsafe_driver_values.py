@@ -1,11 +1,33 @@
 from db_handler import DB_handler
+import os
+import json
 
 #environment constants
-path_base = "/Users/Victor/works/storedsafe_webtests/" #TODO:edit to fit any environment
-path_ie_exc = "IEDriverServer"
-path_chrome_exec ="chromedriver"
+#path_base = "/Users/Victor/works/storedsafe_webtests/" #TODO:edit to fit any environment
+path_ie_exc = "\IEDriverServer"
+path_chrome_exec ="\chromedriver"
+conf_file = 'safe_stored.txt'
 
-db_handler = DB_handler(None,True)
+users = []
+login = []
+
+path_self = os.path.dirname(__file__)
+
+path_base = os.path.abspath(os.path.join(path_self,'..'))
+p_base = os.path.abspath(os.path.join(path_base,conf_file))
+f = open(p_base,'r')
+l = f.readlines()
+f.close()
+
+for obj in l:
+    a = json.loads(obj)
+    if a['__type__'] == 'DbInfo':
+        login = [a['password'],a['host'],a['database'],a['user']]
+    elif a['__type__'] == 'user':
+        True
+
+
+db_handler = DB_handler(login[0],login[1],login[2],login[3],True)
 
 #url constants
 url_base = "https://t1.storedsafe.com/"
