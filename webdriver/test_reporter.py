@@ -1,6 +1,3 @@
-import sys
-
-
 class testentry:
     testnr =0
     testname=""

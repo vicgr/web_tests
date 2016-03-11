@@ -10,6 +10,7 @@ conf_file = 'safe_stored.txt'
 
 users = []
 login = []
+userlogin = []
 
 path_self = os.path.dirname(__file__)
 
@@ -23,11 +24,15 @@ for obj in l:
     a = json.loads(obj)
     if a['__type__'] == 'DbInfo':
         login = [a['password'],a['host'],a['database'],a['user']]
+    elif a['__type__'] == 'userlogin':
+        userlogin=[a['username'],a['password'],a['otp']]
     elif a['__type__'] == 'user':
         True
 
 
 db_handler = DB_handler(login[0],login[1],login[2],login[3],True)
+
+curr_user = None
 
 #url constants
 url_base = "https://t1.storedsafe.com/"
@@ -38,7 +43,7 @@ url_index = "index.php"
 #text and other assorted constants
 text_loginbutton = "Login to Storedsafe"
 
-#Check-values that are necessary for ensuring that the tests can continue
+#Check-values that are necessary for ensuring that the tests can continue (unused)
 check_login = False
 check_login_fail = False
 

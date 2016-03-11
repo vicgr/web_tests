@@ -61,20 +61,15 @@ def test(driver):
         print("Warning: Something went wrong. Is not at the login page.")
         quit(1)
 
-    print("_test1: logging in using NO USER_")
-    page = login_test.loginfailtest(driver,page, reporter, "a", "b")
-    #if not constants.check_login_fail:
-    #    return
+    #print("_test1: logging in using NO USER_")
+    #page = login_test.loginfailtest(driver,page, reporter, "a", "b")
     print("_test2: please enter credentials_")
-    u= str(input('username: '))
-    #u = 'vg'
-    p= str(input('password+yubikey: '))
-    #p="test thing"+input('press yubikey:')
-
+    #u= str(input('username: '))
+    #p= str(input('password+yubikey: '))
+    u = constants.userlogin[0]
+    p = constants.userlogin[1]+constants.userlogin[2]
     page = login_test.logintest(driver, page, reporter, u, p)
-    #if not constants.check_login:
-    #    return
-    page = login_test.logout(driver,page, reporter)
+    page = login_test.logout(driver,page, reporter, u)
 
 
 def end_tests():
