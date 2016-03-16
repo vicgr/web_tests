@@ -107,7 +107,8 @@ class DB_handler(object):
 
     def expect_event_login(self,username):
         query ="select l.id, l.stamp, l.userid, u.username, l.event from ss_log as l join ss_userbase as u on l.userid = u.id and u.username = '"+username+"' and l.event like '%LOGIN%'"
-        return self.db_exec.execute_log_query(query)
+        return  self.db_exec.execute_log_query(query)
+
 
     def expect_event_logout(self,user_):
         #if providing id
@@ -119,6 +120,12 @@ class DB_handler(object):
         else:
             return None
         return self.db_exec.execute_log_query(query)
+
+    def get_user_by_id(self,id):
+
+
+        return stored_user(self.db_exec.execute_query("select * from ss_userbase where id = "+id)[0])
+
 
 
     def reset_time(self):

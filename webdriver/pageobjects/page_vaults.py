@@ -28,14 +28,7 @@ class PageVaults(PageObject):
             p = "".join(list(filter(str.isdigit,i.get_attribute("id"))))
             self.vault_ids.append(p)
             z =self.driver.find_element(By.ID, 'bar'+p)
-            print(z)
             self.vault_content_list.append(z)
-
-        self.vault_list[0].click()
-        self.vault_content_list[0].get_attribute()
-
-
-
 
 
 

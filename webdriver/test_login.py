@@ -63,13 +63,15 @@ class login_test:
             return page
 
         try:
-            assert constants.db_handler.expect_event_login(username)
+            tmp_usr = constants.db_handler.expect_event_login(username)
+            assert tmp_usr
         except AssertionError:
             reporter.add_failure(2,"logintest","no loginevent-found for "+username,"expected a login-event in the log")
             return page
 
         reporter.add_success(2,"logintest","correct login successful - logged in")
         constants.check_login = True
+        constants.logged_in_user= constants.db_handler.get_user_by_id(str(tmp_usr[0][2]))
 
         return page
 

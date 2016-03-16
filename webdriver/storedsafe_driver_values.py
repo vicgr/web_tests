@@ -32,7 +32,7 @@ for obj in l:
 
 db_handler = DB_handler(login[0],login[1],login[2],login[3],True)
 
-curr_user = None
+logged_in_user = None
 
 #url constants
 url_base = "https://t1.storedsafe.com/"
