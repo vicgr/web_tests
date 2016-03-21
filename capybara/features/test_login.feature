@@ -8,11 +8,12 @@ Scenario: Try to login using incorrect parameters
   When I faillogin with username "" and password ""
   Then I should see "savebutton"
 
-@login_test @tru_login
+@login_test @tru_login @t
 Scenario: Login to page
   Given I am on loginpage
-  When I login with username "vg" and password "test thing"
+  When I login as "vg"
   Then I should see "Logout"
+  And log event login for user "vg" is in log
 
 @req_login
 Scenario: Logout from page

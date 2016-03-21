@@ -18,12 +18,14 @@ GEM
       ffi (~> 1.0, >= 1.0.11)
     cliver (0.3.2)
     ffi (1.9.10-x86-mingw32)
+    json (1.8.3)
     mime-types (3.0)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2015.1120)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
     multi_json (1.11.2)
+    mysql (2.9.1-x86-mingw32)
     nokogiri (1.6.7.2-x86-mingw32)
       mini_portile2 (~> 2.0.0.rc2)
     poltergeist (1.9.0)
@@ -52,7 +54,9 @@ PLATFORMS
 
 DEPENDENCIES
   capybara!
+  json
   minitest
+  mysql (~> 2.9, >= 2.9.1)
   poltergeist
   selenium-webdriver
 

@@ -1,9 +1,14 @@
 Given(/^I am on loginpage$/) do
   visit ''
+  assert Page_index .isAtLogin()
 end
 
-When(/^I login with username "([^"]*)" and password "([^"]*)"$/) do |arg1, arg2|
-  Page_index.Login(arg1, arg2)
+
+When(/^I login as "([^"]*)"$/) do |user|
+  keys = C_Support.get_login(user)
+  a = C_Support.get_db_handler.is_username_active(user)
+  $stdout.puts a
+  Page_index .Login(user,keys)
 end
 
 When(/^I logout$/) do

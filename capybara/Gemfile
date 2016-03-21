@@ -6,4 +6,6 @@ group :development, :test do
   gem 'minitest'
   #gem 'capybara-webkit'
   gem 'poltergeist'
+  gem 'mysql', '~> 2.9', '>= 2.9.1'
+  gem 'json'
 end

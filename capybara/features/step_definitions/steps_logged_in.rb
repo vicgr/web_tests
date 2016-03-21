@@ -10,7 +10,10 @@ end
 
 Then(/^I should see "([^"]*)"$/) do |arg1|
 
-  a = has_text?(arg1) ? "true" : "false"
-  puts "has " + arg1+"? " + a
-  assert has_text?(arg1)
+    assert has_text?(arg1)
+
+    #assert find_button(arg1).nil? is false
+
+
+    #assert have_button(arg1)
 end
