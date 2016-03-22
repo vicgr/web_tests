@@ -3,10 +3,6 @@ require 'mysql'
 
 class Db_handler
   @connection = nil
-  "def initialization
-    db = C_Support.get_db_login
-    @connection = Mysql.new db[1],db[0],db[3],db[2]
-  end"
 
   def get_con
     if @connection.nil?
@@ -21,15 +17,17 @@ class Db_handler
   end
 
   def is_username_active(un)
-    q = "select * from ss_userbase where username = '#{un}'"
-    lines=execute_query(q)
+    lines=execute_query("select * from ss_userbase where username = '#{un}'")
     lines.num_rows.times do
-      $stdout.puts lines.fetch_row.join("\s")
+      if Db_status.new(lines.fetch_row[1]).is_active
+        return true
+      end
     end
-    return true
+    return false
   end
 
   def is_userid_active(id)
-    true
+    line=execute_query("select * from ss_userbase where id = #{id}")
+    return Db_status.new(line.fetch_row[1]).is_active
   end
 end
