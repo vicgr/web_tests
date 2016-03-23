@@ -25,7 +25,7 @@ for obj in l:
     if a['__type__'] == 'DbInfo':
         login = [a['password'],a['host'],a['database'],a['user']]
     elif a['__type__'] == 'userlogin':
-        userlogin=[a['username'],a['password'],a['otp']]
+        userlogin=[a['username'],a['password'],a['otp'],a['id']]
     elif a['__type__'] == 'user':
         True
 

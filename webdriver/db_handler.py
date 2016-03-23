@@ -105,10 +105,14 @@ class DB_handler(object):
         query ="select * from ss_log where event like '%AUTH FAILURE%'"
         return self.db_exec.execute_log_query(query)
 
-    def expect_event_login(self,username):
+    def expect_event_login_by_username(self, username):
         query ="select l.id, l.stamp, l.userid, u.username, l.event from ss_log as l join ss_userbase as u on l.userid = u.id and u.username = '"+username+"' and l.event like '%LOGIN%'"
         return  self.db_exec.execute_log_query(query)
 
+    def expect_event_login_by_id(self,userid):
+        query = "select * from ss_log where userid = '{uid}' and event like '%LOGIN%'".format(uid=userid,)
+        #query += (" and stamp >= '{time}'".format(time = self.start_time))
+        return self.db_exec.execute_log_query(query)
 
     def expect_event_logout(self,user_):
         #if providing id

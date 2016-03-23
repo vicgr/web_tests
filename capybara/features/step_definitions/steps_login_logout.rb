@@ -6,11 +6,9 @@ end
 
 When(/^I login as "([^"]*)"$/) do |user|
   keys = C_Support.get_login(user)
-  a = C_Support.get_db_handler.is_username_active(user)
-  b = C_Support.get_db_handler.is_userid_active(15)
   $stdout.puts "___"
-  $stdout.puts a
-  $stdout.puts b
+  assert C_Support.get_db_handler.is_userid_active(C_Support.get_user_id(user))
+  assert C_Support.get_db_handler.is_username_active(user)
   $stdout.puts "___"
   Page_index .Login(user,keys)
 end
