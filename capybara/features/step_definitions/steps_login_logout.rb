@@ -5,12 +5,15 @@ end
 
 
 When(/^I login as "([^"]*)"$/) do |user|
-  keys = C_Support.get_login(user)
-  $stdout.puts "___"
   assert C_Support.get_db_handler.is_userid_active(C_Support.get_user_id(user))
-  assert C_Support.get_db_handler.is_username_active(user)
-  $stdout.puts "___"
+  keys = C_Support.get_login(user)
   Page_index .Login(user,keys)
+  assert C_Support.get_db_handler.auditlog_verify_login(C_Support.get_user_id(user))
+  u = C_Support.get_db_handler.get_user_by_id(C_Support.get_user_id(user))
+  assert Page_vaults .isLoggedIn(u.fullname)
+  #assert Page_vaults .isAtVaultsPage
+
+
 end
 
 When(/^I logout$/) do

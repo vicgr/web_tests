@@ -17,7 +17,6 @@ class C_Support
   @@dbhandler = nil
 
   def self.load_file
-    $stdout.puts "reads file"
     @@users = Hash .new
     File.open('../safe_stored.txt','r') do |f|
       while l = f.gets

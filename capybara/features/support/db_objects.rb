@@ -1,14 +1,14 @@
 class Db_user
 
-  @id = nil
-  @status = nil
-  @username = nil
-  @fullname = nil
-  @email = nil
-  @otpprefix = nil
-  @clientid = nil
-  @fingerprint = nil
-  @password = nil
+  attr_reader :id
+  attr_reader :status
+  attr_reader :username
+  attr_reader :fullname
+  attr_reader :email
+  attr_reader :otpprefix
+  attr_reader :clientid
+  attr_reader :fingerprint
+  attr_accessor :password
 
   def initialize(tup)
     if tup
@@ -22,10 +22,6 @@ class Db_user
       @fingerprint = tup[7]
     end
   end
-
-
-  def status; @status end
-
 end
 
 class Db_status

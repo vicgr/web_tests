@@ -1,7 +1,6 @@
 class Page_index
 
   def self.Login (username, keywords)
-    #a = C_Support.Get_next_yubikey
     fill_in 'username', :with =>username
     fill_in 'keys', :with => keywords
     click_on 'savebutton'

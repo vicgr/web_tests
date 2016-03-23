@@ -28,7 +28,7 @@ class db_executor(object):
     def execute_log_query(self, query):
         if self.timed:
             query += (" and stamp >= '{time}'".format(time = self.start_time))
-
+        print(query)
         return self.execute_query(query)
 
     def execute_query(self,query):
