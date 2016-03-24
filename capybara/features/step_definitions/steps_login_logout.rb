@@ -3,20 +3,20 @@ Given(/^I am on loginpage$/) do
   assert Page_index .isAtLogin()
 end
 
-
 When(/^I login as "([^"]*)"$/) do |user|
-  assert C_Support.get_db_handler.is_userid_active(C_Support.get_user_id(user))
+  uid = C_Support.get_user_id(user)
+  assert C_Support.get_db_handler.is_userid_active(uid)
   keys = C_Support.get_login(user)
   Page_index .Login(user,keys)
-  assert C_Support.get_db_handler.auditlog_verify_login(C_Support.get_user_id(user))
-  u = C_Support.get_db_handler.get_user_by_id(C_Support.get_user_id(user))
-  assert Page_vaults .isLoggedIn(u.fullname)
-  #assert Page_vaults .isAtVaultsPage
+end
 
-
+Then(/^I should be logged in as "([^"]*)"$/) do |user|
+  fn = C_Support.get_db_handler.get_user_by_id(C_Support.get_user_id(user)) .fullname
+  assert Page_logged_in .isLoggedInAs(fn)
 end
 
 When(/^I logout$/) do
+  assert Page_logged_in .isLoggedInAtAll
   click_button 'logouttop'
 end
 

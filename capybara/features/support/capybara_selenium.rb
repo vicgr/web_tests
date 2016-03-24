@@ -23,7 +23,7 @@ class C_Support
         obj = JSON.parse(l)
 
         if obj['__type__'] == 'userlogin'
-          @@users.store(obj['username'].chomp, [obj['id'].chomp,obj['password'].chomp+obj['otp'].chomp])
+          @@users.store(obj['username'].chomp, [obj['id'].chomp, obj['password'].chomp+obj['otp'].chomp])
         end
         if obj['__type__'] == 'DbInfo'
           @@dblogin =[obj['user'],obj['host'],obj['database'],obj['password']]

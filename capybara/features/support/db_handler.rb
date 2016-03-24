@@ -51,4 +51,14 @@ class Db_handler
     lines = execute_log_query(query)
   end
 
+  def auditlog_verify_logout(userid)
+    query = "select id from ss_log where event like '%LOGOUT%' and userid = #{userid}"
+    lines = execute_log_query(query)
+  end
+
+  def auditlog_verify_authfailure_apikey
+    query = "select * from ss_log where event like '%AUTHFAILURE (APIKEY)%'"
+    lines = execute_log_query(query)
+  end
+
 end
