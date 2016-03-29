@@ -4,16 +4,18 @@ require 'capybara/poltergeist'
 require 'json'
 require 'selenium-webdriver'
 require 'capybara/dsl'
-#require 'minitest/autorun'
 
-include Capybara::DSL
 
-#Capybara.default_driver = :selenium
-#Capybara.default_driver =:poltergeist
+def do_capybara_setup
+  include Capybara::DSL
+  set_driver
+  Capybara.app_host = "https://t1.storedsafe.com/"
+  Capybara.run_server = false
+  Capybara.current_session.instance_variable_set(:@touched, false)
+  Capybara.ignore_hidden_elements = false
+end
 
 class C_Support
-
-  #attr_accessor :driver
   @@driver = nil
   def self.driver=(val)
     @@driver = val
@@ -42,28 +44,22 @@ class C_Support
       end
     end
   end
-
-
-
   def self.Get_next_yubikey
     puts "press yubikey"
     return $stdin.gets.chomp
   end
-
   def self.get_login(user)
     if @@users.nil?
       load_file
     end
     return @@users.fetch(user)[1]
   end
-
   def self.get_user_id(user)
     if @@users.nil?
       load_file
     end
     return @@users.fetch(user)[0]
   end
-
   def self.get_db_handler
     if @@dbhandler.nil?
       @@dbhandler = Db_handler .new
@@ -78,10 +74,4 @@ class C_Support
   end
 end
 
-
-
-set_driver
-Capybara.app_host = "https://t1.storedsafe.com/"
-Capybara.run_server = false
-Capybara.current_session.instance_variable_set(:@touched, false)
-Capybara.ignore_hidden_elements = false
+do_capybara_setup
