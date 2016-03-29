@@ -1,16 +1,26 @@
+require 'capybara'
 require 'capybara/cucumber'
 require 'capybara/poltergeist'
 require 'json'
+require 'selenium-webdriver'
+require 'capybara/dsl'
+#require 'minitest/autorun'
 
-#Capybara.default_driver = :selenium
-Capybara.default_driver =:poltergeist
-Capybara.app_host = "https://t1.storedsafe.com/"
-Capybara.run_server = false
-Capybara.current_session.instance_variable_set(:@touched, false)
-Capybara.ignore_hidden_elements = false
 include Capybara::DSL
 
+#Capybara.default_driver = :selenium
+#Capybara.default_driver =:poltergeist
+
 class C_Support
+
+  #attr_accessor :driver
+  @@driver = nil
+  def self.driver=(val)
+    @@driver = val
+  end
+  def self.driver
+    return @@driver
+  end
 
   @@users = nil
   @@dblogin = nil
@@ -67,3 +77,11 @@ class C_Support
     return @@dblogin
   end
 end
+
+
+
+set_driver
+Capybara.app_host = "https://t1.storedsafe.com/"
+Capybara.run_server = false
+Capybara.current_session.instance_variable_set(:@touched, false)
+Capybara.ignore_hidden_elements = false

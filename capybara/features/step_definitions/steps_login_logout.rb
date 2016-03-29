@@ -17,7 +17,7 @@ end
 
 When(/^I logout$/) do
   assert Page_logged_in .isLoggedInAtAll
-  click_button 'logouttop'
+  Page_logged_in .logout
 end
 
 When(/^I faillogin with username "([^"]*)" and password "([^"]*)"$/) do |arg1, arg2|

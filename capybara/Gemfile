@@ -5,6 +5,7 @@ group :development, :test do
   gem 'selenium-webdriver'
   gem 'minitest'
   #gem 'capybara-webkit'
+  gem 'cucumber'
   gem 'poltergeist'
   gem 'mysql', '~> 2.9', '>= 2.9.1'
   gem 'json'

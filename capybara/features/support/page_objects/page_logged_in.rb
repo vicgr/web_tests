@@ -12,4 +12,10 @@ class Page_logged_in
     return has_css?("img[src='img/ico/user/user.png']")
   end
 
+  def self.logout
+    click_button 'logouttop'
+    if C_Support.driver
+      page.driver.browser.switch_to.alert .accept
+    end
+  end
 end
