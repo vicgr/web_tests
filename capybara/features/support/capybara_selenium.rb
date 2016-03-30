@@ -4,6 +4,7 @@ require 'capybara/poltergeist'
 require 'json'
 require 'selenium-webdriver'
 require 'capybara/dsl'
+require 'minitest/autorun'
 
 
 def do_capybara_setup
@@ -26,20 +27,28 @@ class C_Support
 
   @@users = nil
   @@dblogin = nil
+  @@vaultmembers = nil
   @@dbhandler = nil
+  @@vaults = nil
 
   def self.load_file
     @@users = Hash .new
+    @@vaults = Hash.new
+    @@vaultmembers = Hash .new {|h,k| h[k]=[]}
     File.open('../safe_stored.txt','r') do |f|
       while l = f.gets
         obj = JSON.parse(l)
 
         if obj['__type__'] == 'userlogin'
           @@users.store(obj['username'].chomp, [obj['id'].chomp, obj['password'].chomp+obj['otp'].chomp])
-        end
-        if obj['__type__'] == 'DbInfo'
+        elsif obj['__type__'] == 'DbInfo'
           @@dblogin =[obj['user'],obj['host'],obj['database'],obj['password']]
+        elsif obj['__type__'] == 'vaultmember'
+          @@vaultmembers[obj['username']] << obj['vaultname']
+        elsif obj['__type__'] == 'vault'
+          @@vaults.store(obj['vaultname'],obj['vaultid'])
         end
+
 
       end
     end
@@ -59,6 +68,12 @@ class C_Support
       load_file
     end
     return @@users.fetch(user)[0]
+  end
+  def self.get_vault_id(vault)
+    if @@vaults.nil?
+      load_file
+    end
+    return @@vaults.fetch(vault)
   end
   def self.get_db_handler
     if @@dbhandler.nil?

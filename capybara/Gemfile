@@ -4,9 +4,9 @@ group :development, :test do
   gem 'capybara', :git => 'git://github.com/jnicklas/capybara.git'
   gem 'selenium-webdriver'
   gem 'minitest'
-  #gem 'capybara-webkit'
   gem 'cucumber'
   gem 'poltergeist'
-  gem 'mysql', '~> 2.9', '>= 2.9.1'
+  gem 'mysql2'
   gem 'json'
+  #gem 'fuubar-cucumber'
 end
