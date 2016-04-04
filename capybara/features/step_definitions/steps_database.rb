@@ -10,6 +10,21 @@ Then(/^log event authfailure apikey is in log$/) do
   assert C_Support.get_db_handler.auditlog_verify_authfailure_apikey
 end
 
+
+
 Given(/^"([^"]*)" is a member of vault "([^"]*)"$/) do |user, vault|
   assert C_Support.get_db_handler.verify_user_is_member_of_vault(C_Support.get_user_id(user),C_Support.get_vault_id(vault))
+end
+
+Given(/^"([^"]*)" is a "([^"]*)" member of vault "([^"]*)"$/) do |user, privilege, vault|
+  assert C_Support.get_db_handler.verify_user_is_member_of_vault(C_Support.get_user_id(user),C_Support.get_vault_id(vault),privilege)
+end
+
+Given(/^"([^"]*)" has privilege "([^"]*)", audit = "([^"]*)", ug\-list="([^"]*)"$/) do |user, prv, aud, ugl|
+
+  status = C_Support.get_db_handler.get_db_user_status(C_Support.get_user_id(user))
+  prv=='true' ? prv=true : prv=false
+  aud=='true' ? aud=true : aud=false
+  ugl=='true' ? ugl=true : ugl=false
+  assert status.compare_status(privilege:prv,has_audit:aud,has_uglist:ugl)
 end

@@ -45,4 +45,84 @@ class Db_status
 
   def status; @status end
 
+  def compare_status(status, privilege: nil, audit: nil,eschrow: nil,alarm: nil,changepass: nil,active: nil,uglist: nil,mail: nil,bad_policy: nil,radius: nil)
+    #privilege should be 'read','write' or 'admin'
+    #the rest booleans!
+
+    if !privilege.nil?
+      if privilege == 'admin'
+        if !has_admin
+          return false
+        end
+      elsif privilege == 'write'
+        if !has_write
+          return false
+        end
+      elsif privilege == 'read'
+        if !has_read
+          return false
+        end
+      else
+        return false
+        #raise error?
+      end
+    end
+
+    if !audit.nil?
+      if has_audit != audit
+        return false
+      end
+    end
+
+    if !eschrow.nil?
+      if has_eschrow != eschrow
+        return false
+      end
+    end
+
+    if !alarm.nil?
+      if has_alarm != alarm
+        return false
+      end
+    end
+
+    if !changepass.nil?
+      if has_changepass != changepass
+        return false
+      end
+    end
+
+    if !active.nil?
+      if is_active != active
+        return false
+      end
+    end
+
+    if !uglist.nil?
+      if has_uglist != uglist
+        return false
+      end
+    end
+
+    if !mail.nil?
+      if is_mail!=mail
+        return false
+      end
+    end
+
+    if !bad_policy.nil?
+      if badpolicy!=bad_policy
+        return false
+      end
+    end
+
+    if !radius.nil?
+      if has_radius != radius
+        return false
+      end
+    end
+
+    return true
+  end
+
 end

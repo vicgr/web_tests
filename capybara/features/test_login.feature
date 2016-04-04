@@ -30,9 +30,12 @@ Scenario: Logout from page
 @admin
 Scenario: Admin scenario
   Given I am on loginpage
-  And "test_admin" is a member of vault "v_test_vault_1"
+  And "test_admin" has privilege "admin", audit = "true", ug-list="true"
+  And "test_admin" is a "admin" member of vault "v_test_vault_1"
   When I login as "test_admin"
   Then I should be logged in as "test_admin"
   And I am on vaultpage
   And log event login for user "test_admin" is in log
-  And vault "v_test_vault_1" is in the list of vaults
+  And I am logged in with privileges "admin", with audit = "true" and ug-list = "true"
+  #Given vault "v_test_vault_1" is in the list of vaults
+  #When I open vault "v_test_vault_1"

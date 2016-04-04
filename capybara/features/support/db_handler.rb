@@ -8,7 +8,6 @@ class Db_handler
   def get_con
     if @connection.nil?
       db = C_Support.get_db_login
-      #@connection = Mysql.new db[1],db[0],db[3],db[2]
       Mysql2::Client.default_query_options.merge!(:as => :array)
       @connection = Mysql2::Client.new(:host=>db[1],:username=>db[0],:database=>db[2],:password=>db[3])
 
@@ -40,11 +39,15 @@ class Db_handler
     return false
   end
 
-  def is_userid_active(id)
+  def get_user_status_by_id(id)
     execute_query("select * from ss_userbase where id = '#{id}'").each do |row|
-      return Db_status.new(row[1]).is_active
+      return Db_status.new(row[1])
     end
     return false
+  end
+
+  def is_userid_active(id)
+    return get_user_status_by_id(id).is_active
   end
 
   def get_user_by_id(id)
@@ -53,11 +56,27 @@ class Db_handler
     end
   end
 
-  def verify_user_is_member_of_vault(u_id,v_id)
-    execute_query("select groupid,userid from ss_groupkeys where groupid = #{v_id} and userid = #{u_id}").each do |row|
-      return row
+  def verify_user_is_member_of_vault(u_id,v_id,priv=nil)
+    execute_query("select groupid,userid,status from ss_groupkeys where groupid = #{v_id} and userid = #{u_id}").each do |row|
+      if priv.nil?
+        return row
+      else
+        if priv == 'admin'
+          return Db_status.new(row[2]) .has_admin
+        elsif priv == 'write'
+          return Db_status.new(row[2]) .has_write
+        else #priv = read as default
+          return Db_status.new(row[2]) .has_read
+        end
+      end
     end
     return false
+  end
+
+  def get_db_user_status(userid)
+    execute_query("select status from ss_userbase where id = #{userid}").each do |row|
+      return Db_status.new(row[0])
+    end
   end
 
   def auditlog_verify_login(userid) ##Verifies that _any_ login event has happened for the user _after_ @starttime!
@@ -80,5 +99,4 @@ class Db_handler
     end
     return false
   end
-
 end
