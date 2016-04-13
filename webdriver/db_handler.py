@@ -1,3 +1,4 @@
+#!python3
 import mysql.connector
 from db_objects import stored_user
 

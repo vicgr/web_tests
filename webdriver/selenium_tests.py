@@ -1,3 +1,4 @@
+#!python3
 from pageobjects import page_login
 from selenium import webdriver
 import test_reporter

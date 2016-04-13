@@ -1,3 +1,5 @@
+#!python3
+
 from pageobjects import page_login
 from pageobjects import page_vaults
 import storedsafe_driver_values as constants

@@ -1,3 +1,4 @@
+#!python3
 from page_objects import PageObject
 from page_objects import PageElement
 from selenium.webdriver.common.alert import Alert

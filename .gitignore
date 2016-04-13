@@ -5,5 +5,7 @@
 logins and configs.txt
 /webdriver/db_tester.py
 /webdriver/.idea/**
+/robotframework/.idea
+/capybara/.idea/**
 /webdriver/pageobjects/__pycache__/**
 safe_stored.txt

@@ -1,3 +1,4 @@
+#!python3
 from db_handler import DB_handler
 import os
 import json

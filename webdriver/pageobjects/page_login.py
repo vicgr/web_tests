@@ -1,3 +1,4 @@
+#!python3
 from page_objects import PageObject, PageElement
 #from pageobjects.page_vaults import PageVaults
 import pageobjects.page_vaults as PageVaults

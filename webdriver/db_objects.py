@@ -1,3 +1,4 @@
+#!python3
 import json
 
 class stored_user():

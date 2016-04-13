@@ -1,3 +1,4 @@
+#!python3
 from page_objects import PageObject
 from selenium.webdriver.common.by import By
 

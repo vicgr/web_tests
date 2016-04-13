@@ -1,3 +1,4 @@
+#!python3
 class testentry:
     testnr =0
     testname=""
