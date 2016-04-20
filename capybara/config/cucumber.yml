@@ -1,4 +1,4 @@
 # config/cucumber.yml
 ##YAML Template
 ---
-default: -t @admin #Fivemat -t @admin
+default: -t @item #Fivemat -t @admin

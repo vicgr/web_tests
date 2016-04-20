@@ -44,4 +44,33 @@ class Page_vaults < Page_logged_in
     return true
   end
 
+  def self.isObjectInVault(vaultid,objectname)
+    return find(:css,"[id=bar#{vaultid}]").has_content?(objectname)
+  end
+
+
+
+  def self.create_new_item_server(vaultid, itemname)
+    openVault(vaultid)
+    click_button "bar#{vaultid}add"
+    choose 'templateid1'
+    click_button "cont#{vaultid}"
+    itemdata = C_Support.get_newitem_server(itemname)
+    fill_in 'host',:with=> itemname
+    fill_in 'username',:with=> itemdata[1]
+    if itemdata[2]== ''
+      click_button 'gen'
+    else
+      fill_in 'password',:with => itemdata[2]
+    end
+    if itemdata[3]
+      check 'password_alarm'
+    end
+    fill_in 'info',:with=>itemdata[4]
+    fill_in 'cryptedinfo',:with=>itemdata[5]
+    click_button 'submitbutton'
+    return true
+  end
+
+
 end

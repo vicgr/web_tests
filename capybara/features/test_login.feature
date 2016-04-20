@@ -39,3 +39,10 @@ Scenario: Admin scenario
   And I am logged in with privileges "admin", with audit = "true" and ug-list = "true"
   #Given vault "v_test_vault_1" is in the list of vaults
   #When I open vault "v_test_vault_1"
+
+@item
+Scenario: create item
+  Given I am on loginpage
+  And I login as "test_admin"
+  And I open vault "v_test_vault_1"
+  And "test_admin" creates new item "v_test_object_2" of type "server" in vault "v_test_vault_1"

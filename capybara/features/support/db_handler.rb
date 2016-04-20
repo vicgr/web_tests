@@ -73,6 +73,13 @@ class Db_handler
     return false
   end
 
+  def get_newest_item_id(vaultid,objectname)
+    execute_query("select MAX(id) from ss_objects where groupid = #{vaultid} and objectname='#{objectname}'").each do |row|
+      return row[0]
+    end
+    return false
+  end
+
   def get_db_user_status(userid)
     execute_query("select status from ss_userbase where id = #{userid}").each do |row|
       return Db_status.new(row[0])
@@ -99,4 +106,12 @@ class Db_handler
     end
     return false
   end
+
+  def auditlog_verify_item_creation(userid,vaultid,objectid)
+    execute_log_query("select * from ss_log where userid=#{userid} and groupid=#{vaultid} and objectid=#{objectid} and event like '%OBJECT CREATED%'").each do |row|
+      return row
+    end
+    return false
+  end
+
 end

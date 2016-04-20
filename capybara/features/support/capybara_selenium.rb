@@ -30,10 +30,12 @@ class C_Support
   @@vaultmembers = nil
   @@dbhandler = nil
   @@vaults = nil
+  @@newitem_servers = nil
 
   def self.load_file
     @@users = Hash .new
-    @@vaults = Hash.new
+    @@vaults = Hash .new
+    @@newitem_servers = Hash .new
     @@vaultmembers = Hash .new {|h,k| h[k]=[]}
     File.open('../safe_stored.txt','r') do |f|
       while l = f.gets
@@ -47,6 +49,10 @@ class C_Support
           @@vaultmembers[obj['username']] << obj['vaultname']
         elsif obj['__type__'] == 'vault'
           @@vaults.store(obj['vaultname'],obj['vaultid'])
+        elsif obj['__type__'] == 'newitem'
+          if obj['itemtype'] == 'server'
+            @@newitem_servers.store(obj['itemname'].chomp, [obj['host'].chomp,obj['username'].chomp,obj['password'].chomp,obj['alert if decrypted'].chomp=="True",obj['information'].chomp,obj['sensitive information'].chomp])
+          end
         end
 
 
@@ -86,6 +92,12 @@ class C_Support
       load_file
     end
     return @@dblogin
+  end
+  def self.get_newitem_server(itemname)
+    if @@newitem_servers.nil?
+      load_file
+    end
+    return @@newitem_servers.fetch(itemname)
   end
 end
 
