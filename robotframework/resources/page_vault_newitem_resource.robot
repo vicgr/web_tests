@@ -1,0 +1,22 @@
+*** Variables ***
+${radio server}    id=templateid1
+${radio folder}    id=templateid2
+${radio person}    id=templateid0
+${radio login}    id=templateid4
+${radio shortlogin}    id=templateid10
+${radio file}     id=templateid3
+${radio quicknote}    id=templateid5
+${radio pki}      id=templateid6
+${radio certificate}    id=templateid7
+${radio note}     id=templateid8
+${radio pin}      id=templateid9
+${newitem continue}    id=cont
+${newitem popup}    id=popupwindow
+${newitem host}    id=host
+${newitem username}    id=username
+${newitem password}    id=password
+${newitem password generator}    id=gen
+${newitem alarm}    id=password_alarm
+${newitem info}    id=info
+${newitem sensitive info}    id=cryptedinfo
+${newitem submit}    id=submitbutton

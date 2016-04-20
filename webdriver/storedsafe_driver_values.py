@@ -4,14 +4,15 @@ import os
 import json
 
 #environment constants
-#path_base = "/Users/Victor/works/storedsafe_webtests/" #TODO:edit to fit any environment
 path_ie_exc = "\IEDriverServer"
 path_chrome_exec ="\chromedriver"
 conf_file = 'safe_stored.txt'
 
 users = []
 login = []
-userlogin = []
+userlogins = {}
+item_server = {}
+vaults = {}
 
 path_self = os.path.dirname(__file__)
 
@@ -26,14 +27,27 @@ for obj in l:
     if a['__type__'] == 'DbInfo':
         login = [a['password'],a['host'],a['database'],a['user']]
     elif a['__type__'] == 'userlogin':
-        userlogin=[a['username'],a['password'],a['otp'],a['id']]
+        userlogins[a['username']] = [a['password'], a['otp'], a['id']]
     elif a['__type__'] == 'user':
         True
+    elif a['__type__'] == 'vault':
+        vaults[a['vaultname']] = a['vaultid']
+    elif a['__type__'] == 'newitem':
+        if a['itemtype'] == 'server':
+            item_server[a['itemname']] = [a['host'], a['username'], a['password'], a['alert if decrypted'],
+                                      a['information'], ['sensitive information']]
 
 
 db_handler = DB_handler(login[0],login[1],login[2],login[3],True)
 
-logged_in_user = None
+def get_user(username):
+    return userlogins[username]
+
+def get_vaultsid(vaultname):
+    return vaults[vaultname]
+
+def get_newitem_server(itemname):
+    return item_server[itemname]
 
 #url constants
 url_base = "https://t1.storedsafe.com/"

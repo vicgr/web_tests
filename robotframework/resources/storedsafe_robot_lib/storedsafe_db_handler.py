@@ -38,11 +38,25 @@ def get_user_fullname(username):
     cursor.fetchall()
     return res
 
-def audit_event_login(user):
-    u_id = s_h.get_user_id(user)
-    if not u_id:
+def verify_object_in_vault(vault,object):
+    v_name = s_h.get_vault_id(vault)
+
+def get_object_id_by_name(vaultname, objectname): #gets the _latest_ created object with that name
+    v_id = s_h.get_vault_id(vaultname)
+    if not v_id:
         return False
-    query = "select id from ss_log where event like '%LOGIN%' and userid = {} and stamp >= '{}'".format(u_id,start_time)
+    query = "select id, status from ss_objects where groupid = {} and objectname = '{}' order by id desc".format(v_id, objectname)
+    cursor.execute(query)
+    res = cursor.fetchall()
+    for row in res:
+        if s_db_objects.obj_status(row[1]) .is_active():
+            return row[0]
+    return
+
+def get_next_object_id():
+    return
+
+def audit_execute(query):
     cursor.execute(query)
     res = cursor.fetchone()
     if res is None:
@@ -51,6 +65,25 @@ def audit_event_login(user):
     cursor.fetchall()
     return res
 
-def audit_event_logout(user):
-    return
+def audit_event_login(user):
+    u_id = s_h.get_user_id(user)
+    if not u_id:
+        return False
+    query = "select id from ss_log where event like '%LOGIN%' and userid = {} and stamp >= '{}'".format(u_id,start_time)
+    return audit_execute(query)
 
+def audit_event_logout(user):
+    u_id = s_h.get_user_id(user)
+    if not u_id:
+        return False
+    query = "select id from ss_log where event like '%LOGOUT%' and userid = {} and stamp >= '{}'".format(u_id,start_time)
+    return audit_execute(query)
+
+def audit_event_object_created(username,vaultname,objectname):
+    u_id = s_h.get_user_id(username)
+    v_id = s_h.get_vault_id(vaultname)
+    o_id = get_object_id_by_name(vaultname,objectname)
+    if not v_id or not u_id or not o_id:
+        return False
+    query = "select id from ss_log where event like '%OBJECT CREATED%' and userid = {} and groupid = {} and objectid = {} and stamp >= '{}'".format(u_id,v_id,o_id,start_time)
+    return  audit_execute(query)
