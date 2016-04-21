@@ -31,12 +31,14 @@ class C_Support
   @@dbhandler = nil
   @@vaults = nil
   @@newitem_servers = nil
+  @@newvaults = nil
 
   def self.load_file
     @@users = Hash .new
     @@vaults = Hash .new
     @@newitem_servers = Hash .new
     @@vaultmembers = Hash .new {|h,k| h[k]=[]}
+    @@newvaults = Hash.new
     File.open('../safe_stored.txt','r') do |f|
       while l = f.gets
         obj = JSON.parse(l)
@@ -53,6 +55,8 @@ class C_Support
           if obj['itemtype'] == 'server'
             @@newitem_servers.store(obj['itemname'].chomp, [obj['host'].chomp,obj['username'].chomp,obj['password'].chomp,obj['alert if decrypted'].chomp=="True",obj['information'].chomp,obj['sensitive information'].chomp])
           end
+        elsif obj['__type__'] == 'newvault'
+          @@newvaults.store(obj['vaultname'].chomp,[obj['policy'].chomp,obj['information'].chomp])
         end
 
 
@@ -98,6 +102,12 @@ class C_Support
       load_file
     end
     return @@newitem_servers.fetch(itemname)
+  end
+  def self.get_newvault_info(vaultname)
+    if @@newvaults.nil?
+      load_file
+    end
+    return @@newvaults.fetch(vaultname)
   end
 end
 

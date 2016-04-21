@@ -72,5 +72,16 @@ class Page_vaults < Page_logged_in
     return true
   end
 
+  def self.create_new_vault(vaultname)
+    vaultdata = C_Support.get_newvault_info(vaultname)
+    click_button "newgroup"
+    fill_in 'groupname',:with=>vaultname
+    select vaultdata[0], :from=> 'policy'
+    fill_in 'info',:with=>vaultdata[1]
+    click_button 'submitbutton'
+    return true
+
+  end
+
 
 end

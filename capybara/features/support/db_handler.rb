@@ -90,6 +90,13 @@ class Db_handler
     return false
   end
 
+  def get_new_vault_id(vaultname)
+    execute_query("select MAX(id) from ss_groups where groupname = '#{vaultname}'").each do |row|
+      return row[0]
+    end
+    return false
+  end
+
   def get_db_user_status(userid)
     execute_query("select status from ss_userbase where id = #{userid}").each do |row|
       return Db_status.new(row[0])
@@ -120,6 +127,14 @@ class Db_handler
   def auditlog_verify_item_creation(userid,vaultid,objectid)
     #execute_log_query
     execute_query("select * from ss_log where userid=#{userid} and groupid=#{vaultid} and objectid=#{objectid} and event like '%OBJECT CREATED%'").each do |row|
+      return row
+    end
+    return false
+  end
+
+  def auditlog_verify_vault_creation(userid,vaultname)
+    v_id=C_Support.get_db_handler.get_new_vault_id(vaultname)
+    execute_log_query("select * from ss_log where userid=#{userid} and groupid = #{v_id} and event like '%VAULT CREATED:#{vaultname}%'").each do |row|
       return row
     end
     return false
