@@ -44,5 +44,7 @@ Scenario: Admin scenario
 Scenario: create item
   Given I am on loginpage
   And I login as "test_admin"
+  Then log event login for user "test_admin" is in log
   And I open vault "v_test_vault_1"
   And "test_admin" creates new item "v_test_object_2" of type "server" in vault "v_test_vault_1"
+  #And "test_admin" creates vault "v_test_vault_2"

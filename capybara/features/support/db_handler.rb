@@ -29,7 +29,8 @@ class Db_handler
   end
 
   def execute_log_query(q)
-    return execute_query( "#{q} and stamp >='#{@start_time}'")
+    q2 = "#{q} and stamp >='#{@start_time}'"
+    return execute_query( q2 )
   end
 
   def is_username_active(un)
@@ -58,19 +59,28 @@ class Db_handler
 
   def verify_user_is_member_of_vault(u_id,v_id,priv=nil)
     execute_query("select groupid,userid,status from ss_groupkeys where groupid = #{v_id} and userid = #{u_id}").each do |row|
-      if priv.nil?
-        return row
+      if row.nil?
+        return false
+      end
+      if priv.nil? #returns the status as a string
+        if Db_status.new(row[2]) .has_admin
+          return 'admin'
+        elsif  Db_status.new(row[2]) .has_write
+          return 'write'
+        elsif Db_status.new(row[2]) .has_read
+          return 'read'
+        end
       else
         if priv == 'admin'
           return Db_status.new(row[2]) .has_admin
         elsif priv == 'write'
           return Db_status.new(row[2]) .has_write
-        else #priv = read as default
+        elsif priov == 'read'
           return Db_status.new(row[2]) .has_read
         end
       end
+      return false
     end
-    return false
   end
 
   def get_newest_item_id(vaultid,objectname)
@@ -108,7 +118,8 @@ class Db_handler
   end
 
   def auditlog_verify_item_creation(userid,vaultid,objectid)
-    execute_log_query("select * from ss_log where userid=#{userid} and groupid=#{vaultid} and objectid=#{objectid} and event like '%OBJECT CREATED%'").each do |row|
+    #execute_log_query
+    execute_query("select * from ss_log where userid=#{userid} and groupid=#{vaultid} and objectid=#{objectid} and event like '%OBJECT CREATED%'").each do |row|
       return row
     end
     return false
