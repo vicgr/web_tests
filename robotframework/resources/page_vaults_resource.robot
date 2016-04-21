@@ -3,6 +3,7 @@ Library           Selenium2Library
 Library           storedsafe_robot_lib/storedsafe_lib.py
 Resource          storedsafe_url_resources.robot
 Resource          page_vault_newitem_resource.robot
+Resource          page_vault_newvault_resource.robot
 
 *** Variables ***
 ${vault list}     id=objectlistwindow
@@ -55,3 +56,11 @@ New Server Item In Vault
     Input Text    ${newitem info}    ${info}
     Input Text    ${newitem sensitive info}    ${sens info}
     Click Button    ${newitem submit}
+
+Create Vault
+    [Arguments]    ${username}    ${vaultname}
+    create new vault    ${vaultname}
+    ${bool}=    Audit Event Vault Created    ${username}    ${vaultname}
+    Should Be True    ${bool}    No vault created event found in audit log for ${vaultname}
+    ${vault id}=    Get VaultID by name    ${vaultname}
+    Page Should Contain Element    bar${vault id}    Expected to find ${vaultname} in the list of vaults. Could not.

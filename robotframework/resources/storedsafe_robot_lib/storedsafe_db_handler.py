@@ -53,6 +53,15 @@ def get_object_id_by_name(vaultname, objectname): #gets the _latest_ created obj
             return row[0]
     return
 
+def get_vault_id_by_name(vaultname): #gets the id of the latest created (highest id) active vault with the given name
+    query = "select id,status from ss_groups where groupname = '{}' order by id desc".format(vaultname)
+    cursor.execute(query)
+    res = cursor.fetchall()
+    for row in res:
+        if s_db_objects.obj_status(row[1]) .is_active():
+            return row[0]
+    return
+
 def get_next_object_id():
     return
 
@@ -87,3 +96,11 @@ def audit_event_object_created(username,vaultname,objectname):
         return False
     query = "select id from ss_log where event like '%OBJECT CREATED%' and userid = {} and groupid = {} and objectid = {} and stamp >= '{}'".format(u_id,v_id,o_id,start_time)
     return  audit_execute(query)
+
+def audit_event_vault_created(username, vaultname):
+    u_id = s_h.get_user_id(username)
+    v_id = get_vault_id_by_name(vaultname)
+    if not u_id or not v_id:
+        return False
+    query = "select id from ss_log where userid = {} and groupid = {} and event like '%VAULT CREATED:{}%' and stamp >= '{}'".format(u_id,v_id,vaultname,start_time)
+    return audit_execute(query)

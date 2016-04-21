@@ -9,6 +9,7 @@ Resource          Resources/page_vaults_resource.robot
 Resource          Resources/page_logged_in_resource.robot
 Library           OperatingSystem
 Resource          resources/storedsafe_audit_resource.robot
+Resource          resources/page_vault_newvault_resource.robot
 
 *** Variables ***
 
@@ -24,7 +25,7 @@ test1
     [Teardown]
 
 test2
-    [Documentation]    ${v}=	verify object in vault	v_test_vault_1	v_test_object_2
+    [Documentation]    ${v}= verify object in vault v_test_vault_1 v_test_object_2
     [Setup]    open browser    ${url base}
     login to storedsafe    test_admin
     ${v}=    verify member of vault    test_admin    v_test_vault_1
@@ -42,5 +43,7 @@ test open browsers
     close browser
 
 test 3
-    ${o id}=    get object id by name    v_test_vault_1    v_test_object_2
-    Log    ${o id}
+    [Setup]    open browser    ${url base}
+    login to storedsafe    test_admin
+    verify on vaults page
+    create vault    test_admin    v_test_vault_2

@@ -7,6 +7,7 @@ login = []
 vaults = {}
 ug_list = {} #lists all vaults a user is a member of (no status, just name)
 servers = {}
+newvaults = {}
 path_ie_exc = "\IEDriverServer"
 path_chrome_exec = "\chromedriver"
 conf_file = 'safe_stored.txt'
@@ -36,6 +37,8 @@ for obj in l:
             servers[a['itemname']] = [a['host'],a['username'],a['password'],a['alert if decrypted'],a['information'],['sensitive information']]
         else:
             True
+    elif a['__type__'] == 'newvault':
+        newvaults[a['vaultname']] = [a['policy'],a['information']]
 
 a = None
 
@@ -60,6 +63,7 @@ def get_vault_id (vaultname):
 def verify_member_of_vault(username,vaultname):
     return True
 
+#new item: server information
 def item_server_get_host(itemname):
     return servers[itemname][0]
 def item_server_get_username(itemname):
@@ -72,3 +76,9 @@ def item_server_get_info(itemname):
     return servers[itemname][4]
 def item_server_get_sens_info(itemname):
     return servers[itemname][5]
+
+#new vault inforamtion
+def get_newvault_policy(vaultname):
+    return newvaults[vaultname][0]
+def get_newvault_info(vaultname):
+    return newvaults[vaultname][1]

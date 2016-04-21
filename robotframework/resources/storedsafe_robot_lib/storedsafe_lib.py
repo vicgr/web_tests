@@ -28,6 +28,18 @@ def verify_object_in_vault(vault,object):
 def get_object_id_by_name(vaultname, objectname):
     return s_db.get_object_id_by_name(vaultname,objectname)
 
+#---GET NEW VAULT INFO---
+def get_newvault_policy(vaultname):
+    return s_fh.get_newvault_policy(vaultname)
+
+def get_newvault_info(vaultname):
+    return s_fh.get_newvault_info(vaultname)
+
+def get_vault_id_by_name(vaultname):
+    return s_db.get_vault_id_by_name(vaultname)
+
+
+
 #---GET ITEM:SERVER---
 def item_server_get_host(itemname):
     return s_fh.item_server_get_host(itemname)
@@ -51,3 +63,6 @@ def audit_event_logout(username):
 
 def audit_event_object_created(username,vaultname,objectname):
     return  s_db.audit_event_object_created(username,vaultname,objectname)
+
+def audit_event_vault_created(username,vaultname):
+    return s_db.audit_event_vault_created(username,vaultname)
