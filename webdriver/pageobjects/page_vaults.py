@@ -2,6 +2,7 @@
 from page_objects import PageObject, PageElement,MultiPageElement
 import storedsafe_driver_values as constants
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
 from pageobjects.element_top_menu import top_menu
 from pageobjects.element_bottom_infobar import bottom_infobar
 
@@ -22,7 +23,7 @@ class PageVaults(PageObject):
         self.topmenu = top_menu(self.driver)
         self.bottommenu = bottom_infobar(self.driver)
         self.vault_list = self.driver.find_elements(By.XPATH, '//*[starts-with(@id,"bartitle")]')
-
+        self.new_vault_button = self.driver.find_element_by_id('newgroup')
         for i in self.vault_list:
             p = "".join(list(filter(str.isdigit,i.get_attribute("id"))))
             z =self.driver.find_element(By.ID, 'bar'+p)
@@ -52,13 +53,22 @@ class PageVaults(PageObject):
 
     def open_vault(self,vaultname):
         id = constants.get_vaultsid(vaultname)
+        return self.open_vault_by_id(id)
+
+    def open_new_vault(self,vaultname):
+        id = constants.db_handler.get_new_vault_id(vaultname)
+        return self.open_vault_by_id(id)
+
+    def open_vault_by_id(self,vaultid):
         for v in self.vault_list:
-            if v.get_attribute('id') == 'bartitle' + id:
+            if v.get_attribute('id') == 'bartitle' + str(vaultid):
                 if v.get_attribute('class') == 'bars _off':
                     v.click()
-                    return
+                return True
+        return False
 
     def create_new_item_server(self,vaultname,itemname,iteminfo):
+        #split in multiple lesser classes to better handle multiple object types
         try:
             self.open_vault(vaultname)
             v_id = constants.get_vaultsid(vaultname)
@@ -80,6 +90,18 @@ class PageVaults(PageObject):
             return False
         return True
 
+
+    def create_new_vault(self,vaultname):
+        try:
+            vaultinfo = constants.get_newvault_info(vaultname)
+            self.new_vault_button.click()
+            self.driver.find_element_by_id('groupname').send_keys(vaultname)
+            Select(self.driver.find_element_by_id('policy')).select_by_visible_text(vaultinfo[0])
+            self.driver.find_element_by_id('info').send_keys(vaultinfo[1])
+            self.driver.find_element_by_id('submitbutton').click()
+        except:
+            return False
+        return True
 
 
 

@@ -58,7 +58,9 @@ def run_tests(driver):
         quit(1)
 
     page = login_test.logintest(driver, page, reporter, username='test_admin')
+
     import test_vaults
+    #test_vaults.vault_tests.create_new_vault(page,reporter,'test_admin','v_test_vault_2')
     test_vaults.vault_tests.open_vault(page,'v_test_vault_1')
     test_vaults.vault_tests.create_new_server_item(None,page,reporter,'test_admin','v_test_vault_1','v_test_object_2')
     #page = login_test.logout(driver,page, reporter, username='test_admin')

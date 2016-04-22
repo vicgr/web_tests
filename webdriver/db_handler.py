@@ -105,6 +105,10 @@ class DB_handler(object):
         query = "select MAX(id) from ss_objects where groupid = {} and objectname='{}'".format(vaultid, itemname)
         return self.db_exec.execute_query(query)[0][0]
 
+    def get_new_vault_id(self,vaultname):
+        query = "select MAX(id) from ss_groups where groupname = '{}'".format(vaultname)
+        return self.db_exec.execute_query(query)[0][0]
+
 
     def expect_event_auth_failure(self): #any failed login?
         query ="select * from ss_log where event like '%AUTH FAILURE%'"
@@ -137,6 +141,11 @@ class DB_handler(object):
     def expect_event_item_created(self,u_id,i_id, v_id):
         query = "select * from ss_log where userid={} and groupid={} and objectid={} and event like '%OBJECT CREATED%'".format(u_id,v_id,i_id)
         return self.db_exec.execute_log_query(query)[0]
+
+    def expect_event_vault_created(self,userid,vaultname):
+        vaultid = self.get_new_vault_id(vaultname)
+        query = "select * from ss_log where userid ={} and groupid={} and event like '%VAULT CREATED:{}%'".format(userid,vaultid,vaultname)
+        return self.db_exec.execute_log_query(query)
 
     def reset_time(self):
         self.db_exec.reset_time()
