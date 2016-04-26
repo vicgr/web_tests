@@ -102,7 +102,12 @@ class DB_handler(object):
         return obj_status(self.db_exec.execute_query(query)[0][0])
 
     def get_new_created_item_in_vault_by_name(self,itemname, vaultid):
+
         query = "select MAX(id) from ss_objects where groupid = {} and objectname='{}'".format(vaultid, itemname)
+        return self.db_exec.execute_query(query)[0][0]
+
+    def get_new_object_type(self, o_id,vaultid):
+        query = "select template from ss_objects where id={} and groupid={}".format(o_id,vaultid)
         return self.db_exec.execute_query(query)[0][0]
 
     def get_new_vault_id(self,vaultname):
@@ -146,6 +151,17 @@ class DB_handler(object):
         vaultid = self.get_new_vault_id(vaultname)
         query = "select * from ss_log where userid ={} and groupid={} and event like '%VAULT CREATED:{}%'".format(userid,vaultid,vaultname)
         return self.db_exec.execute_log_query(query)
+
+    def expect_event_object_decryption(self,userid, v_id, o_id):
+        query = "select id from ss_log where userid={} and groupid={} and objectid={} and event like '%ALARM DECRYPTED%'".format(userid,v_id,o_id)
+        return self.db_exec.execute_log_query(query)
+
+    def expect_event_object_copied(self,userid, v_id_f, o_id, v_id_t):
+        query = "select id from ss_log where userid={} and groupid={} and objectid={} and event like '%COPY TO VAULT: {}%'".format(
+            userid,v_id_f,o_id,v_id_t
+        )
+        return self.db_exec.execute_log_query(query)
+
 
     def reset_time(self):
         self.db_exec.reset_time()

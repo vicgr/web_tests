@@ -10,6 +10,10 @@ ${vault list}     id=objectlistwindow
 ${vault bar}      bartitle
 ${vault_open_class}    bars _on
 ${vault_closed_class}    bars _off
+${button copy}    id=copy_
+${button move}    id=move_
+${button paste}    id=paste_
+${button delete}    id=delete_
 
 *** Keywords ***
 verify on vaults page
@@ -19,6 +23,15 @@ verify on vaults page
 open vault
     [Arguments]    ${vaultname}
     ${vault id}=    Get Vault Id    ${vaultname}
+    Open Vault by Id    ${vault id}
+
+Open Vault by Name
+    [Arguments]    ${vaultname}
+    ${vault id}=    Get Vault Id By Name    ${vaultname}
+    Open Vault by Id    ${vault id}
+
+Open Vault by Id
+    [Arguments]    ${vault id}
     ${class}=    Get Element Attribute    ${vault bar}${vault id}@class
     Run Keyword if    '${class}'=='${vault_closed_class}'    Click Element    ${vault bar}${vault id}
     ${class}=    Get Element Attribute    ${vault bar}${vault id}@class
@@ -64,3 +77,26 @@ Create Vault
     Should Be True    ${bool}    No vault created event found in audit log for ${vaultname}
     ${vault id}=    Get VaultID by name    ${vaultname}
     Page Should Contain Element    bar${vault id}    Expected to find ${vaultname} in the list of vaults. Could not.
+
+Move Object
+    [Arguments]    ${user}    ${vault from}    ${vault to}    ${objectname}
+    ${id from}=    Get Vault Id    ${vault from}
+    ${id to}=    Get Vault Id By Name    ${vault to}
+    ${bool}=    Get Object Id By Name    ${vault from}    ${objectname}
+    Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault from}
+    Open Vault by Id    ${id from}
+    Open Vault by Id    ${id to}
+    ${object id}=    Get Object Id    ${objectname}
+    ${o type}=    Get Object Type    ${objectname}
+    Wait Until Element Is Visible    id=mod_${id from}_${o type}_${object id}
+    Select Checkbox    id=mod_${id from}_${o type}_${object id}
+    Click Element    ${button copy}${id from}
+    Click Element    ${button paste}${id to}
+    Confirm Action
+    ${userid}=    Get User Id    ${user}
+    ${bool}=    Audit Event Object Moved    ${userid}    ${id from}    ${id to}    ${object id}
+    Should Be True    ${bool}    could not find audit log event of moving object ${objectname}
+    ${bool}=    Get Object Id By Name    ${vault to}    ${objectname}
+    Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault to}
+    ${bool}=    Objects Should Be Similar    ${vault to}    ${objectname}    ${vault from}    ${objectname}
+    Should Be True    ${bool}    object ${objectname} in ${vault from} and ${vault to} does not seem to be similar

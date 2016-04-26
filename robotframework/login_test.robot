@@ -47,3 +47,8 @@ test 3
     login to storedsafe    test_admin
     verify on vaults page
     create vault    test_admin    v_test_vault_2
+
+move object
+    [Setup]    open browser    ${url base}    browser=gc
+    login to storedsafe    test_admin
+    Move Object    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_1.pdf

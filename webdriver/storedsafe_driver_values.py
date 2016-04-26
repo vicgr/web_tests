@@ -14,6 +14,7 @@ userlogins = {}
 item_server = {}
 vaults = {}
 newvaults = {}
+objects = {}
 
 path_self = os.path.dirname(__file__)
 
@@ -39,6 +40,9 @@ for obj in l:
                                       a['information'], ['sensitive information']]
     elif a['__type__'] == 'newvault':
         newvaults[a['vaultname']] = [a['policy'],a['information']]
+    elif a['__type__'] == 'object':
+        objects[a['objectname']] = [a['objectid'],a['vaultid'],a['objecttype']]
+
 
 
 db_handler = DB_handler(login[0],login[1],login[2],login[3],True)
@@ -54,6 +58,9 @@ def get_newitem_server(itemname):
 
 def get_newvault_info(vaultname):
     return newvaults[vaultname]
+
+def get_object(objectname):
+    return objects[objectname]
 
 #url constants
 url_base = "https://t1.storedsafe.com/"

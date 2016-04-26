@@ -14,8 +14,6 @@ cursor = connection.cursor()
 
 cursor.execute('select NOW()')
 start_time = cursor.fetchone()[0]
-print start_time
-
 
 def is_user_active(user):
     u_id = s_h.get_user_id(user)
@@ -41,10 +39,12 @@ def get_user_fullname(username):
 def verify_object_in_vault(vault,object):
     v_name = s_h.get_vault_id(vault)
 
-def get_object_id_by_name(vaultname, objectname): #gets the _latest_ created object with that name
+def get_object_id_by_name(vaultname, objectname): #gets the _latest_ created _active_ object with that name
     v_id = s_h.get_vault_id(vaultname)
     if not v_id:
-        return False
+        v_id = get_vault_id_by_name(vaultname)
+        if not v_id:
+            return False
     query = "select id, status from ss_objects where groupid = {} and objectname = '{}' order by id desc".format(v_id, objectname)
     cursor.execute(query)
     res = cursor.fetchall()
@@ -61,6 +61,18 @@ def get_vault_id_by_name(vaultname): #gets the id of the latest created (highest
         if s_db_objects.obj_status(row[1]) .is_active():
             return row[0]
     return
+
+def objects_Should_Be_Similar(vault1,object1,vault2,object2):
+    o_id_1 = get_object_id_by_name(vault1,object1)
+    o_id_2 = get_object_id_by_name(vault2,object2)
+    cursor.execute("select * from ss_objects where id={}".format(o_id_1))
+    for row in cursor:
+        o1 = row
+    cursor.execute("select * from ss_objects where id={}".format(o_id_2))
+    for row in cursor:
+        o2= row
+    return o1[1]==o2[1] and o1[2]==o2[2] and o1[4]==o2[4] and o1[6]==o2[6] and o1[7]==o2[7] and o1[9]==o2[9] and o1[10]==o2[10]
+
 
 def get_next_object_id():
     return
@@ -103,4 +115,14 @@ def audit_event_vault_created(username, vaultname):
     if not u_id or not v_id:
         return False
     query = "select id from ss_log where userid = {} and groupid = {} and event like '%VAULT CREATED:{}%' and stamp >= '{}'".format(u_id,v_id,vaultname,start_time)
+    return audit_execute(query)
+
+def audit_event_object_copied(userid,vault_from,vault_to,objectid):
+    query = "select id from ss_log where userid={} and objectid = {} and groupid = {} and event like '%COPY TO VAULT: {}%'".format(userid,objectid,vault_from,vault_to)
+    return audit_execute(query)
+
+
+def audit_event_object_decryption(userid, v_id, o_id):
+    query = "select id from ss_log where userid={} and groupid={} and objectid={} and event like '%ALARM DECRYPTED%'".format(
+        userid, v_id, o_id)
     return audit_execute(query)

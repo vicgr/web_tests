@@ -2,7 +2,10 @@
 from page_objects import PageObject, PageElement,MultiPageElement
 import storedsafe_driver_values as constants
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.alert import Alert
 from pageobjects.element_top_menu import top_menu
 from pageobjects.element_bottom_infobar import bottom_infobar
 
@@ -52,7 +55,11 @@ class PageVaults(PageObject):
                     return
 
     def open_vault(self,vaultname):
-        id = constants.get_vaultsid(vaultname)
+        try:
+            id = constants.get_vaultsid(vaultname)
+        except KeyError:
+            id=constants.db_handler.get_new_vault_id(vaultname)
+
         return self.open_vault_by_id(id)
 
     def open_new_vault(self,vaultname):
@@ -88,6 +95,59 @@ class PageVaults(PageObject):
             self.driver.find_element_by_id('submitbutton').click()
         except:
             return False
+        return True
+
+    def mark_object(self,vaultname, objectname):
+        try:
+            self.open_vault(vaultname)
+            vaultid = constants.get_vaultsid(vaultname)
+            try:
+                object= constants.get_object(objectname)
+                o_id = object[0]
+                o_type = object[2]
+            except KeyError:
+                o_id = constants.db_handler.get_new_created_item_in_vault_by_name(objectname,vaultid)
+                o_type = constants.db_handler.get_new_object_type(o_id,vaultid)
+
+
+            self.driver.find_element_by_id('mod_{}_{}_{}'.format(vaultid,o_type,o_id)).click()
+        except:
+            import sys
+            print(sys.exc_info())
+            return False
+        return True
+
+    def copy_object(self,vaultname,objectname):
+        a = self.mark_object(vaultname,objectname)
+        if not a:
+            return False
+        try:
+            self.driver.find_element_by_id('copy_'+constants.get_vaultsid(vaultname)).click()
+        except:
+            return False
+        return True
+
+    def get_encrypted_data(self,vaultid,objectid):
+        self.open_vault_by_id(vaultid)
+        obj=self.driver.find_element(By.XPATH, '//*[contains(@id,":{}:")]'.format(objectid))
+        obj.click()
+        data = obj.find_element_by_class_name("obfuscate").text
+        return data
+
+    def paste_object(self,vaultname):
+        try:
+            self.open_vault(vaultname)
+            try:
+                vaultid = constants.get_vaultsid(vaultname)
+            except KeyError:
+                vaultid = constants.db_handler.get_new_vault_id(vaultname)
+            self.driver.find_element_by_id('paste_{}'.format(vaultid)).click()
+            Alert(self.driver).accept()
+        except:
+            return False
+        #wait for waitwondow to disappear => wait for database to update
+        WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.ID, "waitwindow")))
+
         return True
 
 
