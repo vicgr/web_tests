@@ -51,7 +51,8 @@ def get_object_id_by_name(vaultname, objectname): #gets the _latest_ created _ac
     for row in res:
         if s_db_objects.obj_status(row[1]) .is_active():
             return row[0]
-    return
+    return False
+
 
 def get_vault_id_by_name(vaultname): #gets the id of the latest created (highest id) active vault with the given name
     query = "select id,status from ss_groups where groupname = '{}' order by id desc".format(vaultname)

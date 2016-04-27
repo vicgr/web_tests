@@ -34,6 +34,7 @@ def get_object_type(objectname):
 #---OBJECTS IN DATABASE RELATED METHODS---
 def get_object_id_by_name(vaultname, objectname):
     return s_db.get_object_id_by_name(vaultname,objectname)
+
 def  objects_Should_Be_Similar(vault1,object1,vault2,object2):
     return s_db.objects_Should_Be_Similar(vault1,object1,vault2,object2)
 

@@ -30,7 +30,7 @@ test2
     login to storedsafe    test_admin
     ${v}=    verify member of vault    test_admin    v_test_vault_1
     Should Be True    ${v}
-    open vault    v_test_vault_1
+    Open Vault    v_test_vault_1
     New Server Item In Vault    v_test_vault_1    v_test_object_2
     ${v}=    get object id by name    v_test_vault_1    v_test_object_2
     Should Be True    ${v}
@@ -48,7 +48,13 @@ test 3
     verify on vaults page
     create vault    test_admin    v_test_vault_2
 
-move object
+copy object
     [Setup]    open browser    ${url base}    browser=gc
     login to storedsafe    test_admin
-    Move Object    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_1.pdf
+    ${cont1}=    Decrypt Object Information    test_admin    v_test_vault_1    v_test_object_2
+    audit log object decrypted    test_admin    v_test_vault_1    v_test_object_2
+    Copy Object    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_2
+    audit log object copied    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_2
+    ${cont2}=    Decrypt Object Information    test_admin    v_test_vault_2    v_test_object_2
+    audit log object decrypted    test_admin    v_test_vault_2    v_test_object_2
+    Should Be Equal As Strings    ${cont1}    ${cont2}    Encrypted information of copied objects has changed

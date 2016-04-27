@@ -20,7 +20,7 @@ verify on vaults page
     location should contain    ${url vaults}
     Page Should Contain Element    ${vault list}
 
-open vault
+Open Vault
     [Arguments]    ${vaultname}
     ${vault id}=    Get Vault Id    ${vaultname}
     Open Vault by Id    ${vault id}
@@ -37,7 +37,7 @@ Open Vault by Id
     ${class}=    Get Element Attribute    ${vault bar}${vault id}@class
     Should Be Equal As Strings    ${class}    ${vault_open_class}
 
-close vault
+Close Vault
     [Arguments]    ${vaultname}
     ${vault id}=    Get Vault Id    ${vaultname}
     ${class}=    Get Element Attribute    ${vault bar}${vault id}@class
@@ -47,7 +47,7 @@ close vault
 
 New Server Item In Vault
     [Arguments]    ${name of vault}    ${item name}
-    open vault    ${name of vault}
+    Open Vault    ${name of vault}
     ${vault id}=    Get Vault Id    ${name of vault}
     Click Button    bar${vaultid}add
     Wait Until Element Is Visible    ${newitem popup}
@@ -78,7 +78,7 @@ Create Vault
     ${vault id}=    Get VaultID by name    ${vaultname}
     Page Should Contain Element    bar${vault id}    Expected to find ${vaultname} in the list of vaults. Could not.
 
-Move Object
+Copy Object
     [Arguments]    ${user}    ${vault from}    ${vault to}    ${objectname}
     ${id from}=    Get Vault Id    ${vault from}
     ${id to}=    Get Vault Id By Name    ${vault to}
@@ -86,7 +86,7 @@ Move Object
     Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault from}
     Open Vault by Id    ${id from}
     Open Vault by Id    ${id to}
-    ${object id}=    Get Object Id    ${objectname}
+    ${object id}=    Get Object Id By Name    ${vault from}    ${objectname}
     ${o type}=    Get Object Type    ${objectname}
     Wait Until Element Is Visible    id=mod_${id from}_${o type}_${object id}
     Select Checkbox    id=mod_${id from}_${o type}_${object id}
@@ -94,9 +94,22 @@ Move Object
     Click Element    ${button paste}${id to}
     Confirm Action
     ${userid}=    Get User Id    ${user}
-    ${bool}=    Audit Event Object Moved    ${userid}    ${id from}    ${id to}    ${object id}
+    ${bool}=    Audit Event Object Copied    ${userid}    ${id from}    ${id to}    ${object id}
     Should Be True    ${bool}    could not find audit log event of moving object ${objectname}
+    Wait Until Element Is Not Visible    id=waitwindow
+    Wait Until Element Contains    id=bar${id to}    ${objectname}
     ${bool}=    Get Object Id By Name    ${vault to}    ${objectname}
     Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault to}
     ${bool}=    Objects Should Be Similar    ${vault to}    ${objectname}    ${vault from}    ${objectname}
     Should Be True    ${bool}    object ${objectname} in ${vault from} and ${vault to} does not seem to be similar
+
+Decrypt Object Information
+    [Arguments]    ${username}    ${vaultname}    ${objectname}
+    Wait Until Element Is Not Visible    waitwindow    10
+    Open Vault by Name    ${vaultname}
+    ${object id}=    Get Object Id By Name    ${vaultname}    ${objectname}
+    Wait Until Page Contains Element    xpath=//*[contains(@id,":${object id}:")]
+    Click Element    xpath=//*[contains(@id,":${object id}:")]
+    Wait Until Page Contains Element    xpath=//*[contains(@id,":${object id}:")]/span
+    ${content}=    Get Text    xpath=//*[contains(@id,":${object id}:")]/span
+    Return From Keyword    ${content}

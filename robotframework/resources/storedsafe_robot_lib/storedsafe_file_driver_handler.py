@@ -2,6 +2,7 @@
 import simplejson as json
 import os
 
+
 userlogins = {}
 login = []
 vaults = {}
@@ -34,6 +35,7 @@ for obj in l:
     elif a['__type__'] == 'vault':
         vaults[a['vaultname']] = a['vaultid']
     elif a['__type__'] == 'newitem':
+        objects[a['itemname']] = [None,None,a['type']]
         if a['itemtype'] == 'server':
             servers[a['itemname']] = [a['host'],a['username'],a['password'],a['alert if decrypted'],a['information'],['sensitive information']]
         else:
@@ -72,6 +74,9 @@ def get_object_vault(objectname):
     return objects[objectname][1]
 def get_object_type(objectname):
     return objects[objectname][2]
+
+
+
 
 #new item: server information
 def item_server_get_host(itemname):
