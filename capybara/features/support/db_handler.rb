@@ -140,4 +140,19 @@ class Db_handler
     return false
   end
 
+  def auditlog_verify_object_decryption(userid, v_id, o_id)
+       query = "select id from ss_log where userid=#{userid} and groupid=#{v_id} and objectid=#{o_id} and event like '%ALARM DECRYPTED%'"
+       execute_log_query(query).each do |row|
+         return row
+       end
+       return false
+     end
+
+   def auditlog_verify_object_copied(userid, v_id_f, o_id, v_id_t)
+       query = "select id from ss_log where userid=#{userid} and groupid=#{v_id_f} and objectid=#{o_id} and event like '%COPY TO VAULT: #{v_id_t}%'"
+       execute_log_query(query).each do |row|
+         return row
+       end
+       return false
+     end
 end

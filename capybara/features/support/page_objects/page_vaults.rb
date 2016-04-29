@@ -48,8 +48,6 @@ class Page_vaults < Page_logged_in
     return find(:css,"[id=bar#{vaultid}]").has_content?(objectname)
   end
 
-
-
   def self.create_new_item_server(vaultid, itemname)
     openVault(vaultid)
     click_button "bar#{vaultid}add"
@@ -80,8 +78,35 @@ class Page_vaults < Page_logged_in
     fill_in 'info',:with=>vaultdata[1]
     click_button 'submitbutton'
     return true
-
   end
 
+  def self.read_encrypted_data(vaultname,objectname)
+    v_id = C_Support.get_vault_id(vaultname)
+    self.openVault(v_id)
+    o_id = C_Support.get_object_id(v_id,objectname)
+    decrypted = false
+    if has_css? ("[id*=':#{o_id}:']")
+      el = find(:css,"[id*=':#{o_id}:']")
+      el .click
+      decrypted = el.find(:css,"[class='obfuscate']").text
+    end
+    return decrypted
+  end
+
+  def self.copy_object(vault_from_id,objectname)
+    self.openVault(vault_from_id)
+    o_type = C_Support.get_object_type(objectname)
+    objectid = C_Support.get_object_id(vault_from_id,objectname)
+    check "mod_#{vault_from_id}_#{o_type}_#{objectid}"
+    find(:css, "[id='copy_#{vault_from_id}']") .click
+    return true
+  end
+
+  def self.paste_object(vault_to_id)
+    self.openVault(vault_to_id)
+    find(:css, "[id='paste_#{vault_to_id}']") .click
+    page.driver.browser.switch_to.alert .accept
+    return true
+  end
 
 end

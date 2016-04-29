@@ -1,6 +1,6 @@
 def set_driver
   C_Support.driver= true
-  if ENV['chrome']
+  if ENV['chrome'] or ENV['gc']
     chromedriver_path = File.join(File.absolute_path('../../..', File.dirname(__FILE__)),"chromedriver.exe")
     Selenium::WebDriver::Chrome.driver_path = chromedriver_path
     Capybara.default_driver = :chrome
@@ -27,7 +27,7 @@ def set_driver
           }
           Capybara::Selenium::Driver.new(app, :browser => :ie)
         end
-    elsif ENV['firefox']
+    elsif ENV['firefox'] or ENV['ff']
       Capybara.default_driver = :selenium
 
     "elsif ENV['safari']

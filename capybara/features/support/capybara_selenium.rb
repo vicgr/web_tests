@@ -25,24 +25,29 @@ class C_Support
     return @@driver
   end
 
-  @@users = nil
   @@dblogin = nil
-  @@vaultmembers = nil
   @@dbhandler = nil
+
+  @@users = nil
   @@vaults = nil
-  @@newitem_servers = nil
   @@newvaults = nil
+  @@vaultmembers = nil
+  @@newitem_servers = nil
+  @@objects = nil
+  @@objecttypes = nil
 
   def self.load_file
     @@users = Hash .new
     @@vaults = Hash .new
-    @@newitem_servers = Hash .new
+    @@newvaults = Hash .new
     @@vaultmembers = Hash .new {|h,k| h[k]=[]}
-    @@newvaults = Hash.new
+    @@newitem_servers = Hash .new
+    @@objects = Hash .new
+    @@objecttypes = Hash .new
+
     File.open('../safe_stored.txt','r') do |f|
       while l = f.gets
         obj = JSON.parse(l)
-
         if obj['__type__'] == 'userlogin'
           @@users.store(obj['username'].chomp, [obj['id'].chomp, obj['password'].chomp+obj['otp'].chomp])
         elsif obj['__type__'] == 'DbInfo'
@@ -52,17 +57,20 @@ class C_Support
         elsif obj['__type__'] == 'vault'
           @@vaults.store(obj['vaultname'],obj['vaultid'])
         elsif obj['__type__'] == 'newitem'
+          @@objecttypes.store(obj['itemname'].chomp,obj['type'].chomp)
           if obj['itemtype'] == 'server'
             @@newitem_servers.store(obj['itemname'].chomp, [obj['host'].chomp,obj['username'].chomp,obj['password'].chomp,obj['alert if decrypted'].chomp=="True",obj['information'].chomp,obj['sensitive information'].chomp])
           end
         elsif obj['__type__'] == 'newvault'
           @@newvaults.store(obj['vaultname'].chomp,[obj['policy'].chomp,obj['information'].chomp])
+        elsif obj['__type__'] == 'object'
+          @@objecttypes.store(obj['objectname'].chomp,obj['objecttype'].chomp)
+          @@objects.store(obj['objectname'].chomp,[obj['vaultid'].chomp,obj['objectid'].chomp])
         end
-
-
       end
     end
   end
+
   def self.Get_next_yubikey
     puts "press yubikey"
     return $stdin.gets.chomp
@@ -83,7 +91,11 @@ class C_Support
     if @@vaults.nil?
       load_file
     end
-    return @@vaults.fetch(vault)
+    begin
+      return @@vaults.fetch(vault)
+    rescue KeyError
+      return get_db_handler.get_new_vault_id(vault)
+    end
   end
   def self.get_db_handler
     if @@dbhandler.nil?
@@ -108,6 +120,22 @@ class C_Support
       load_file
     end
     return @@newvaults.fetch(vaultname)
+  end
+  def self.get_object_id(vaultid,objectname)
+    if @@objects.nil?
+      load_file
+    end
+    begin
+      return @@objects.fetch(objectname)[1]
+    rescue KeyError
+      return get_db_handler.get_newest_item_id(vaultid,objectname)
+    end
+  end
+  def self.get_object_type(objectname)
+    if @@objecttypes.nil?
+      load_file
+    end
+    return @@objecttypes.fetch(objectname)
   end
 end
 
