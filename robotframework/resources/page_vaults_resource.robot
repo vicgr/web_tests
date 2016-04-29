@@ -96,7 +96,9 @@ Copy Object
     ${userid}=    Get User Id    ${user}
     ${bool}=    Audit Event Object Copied    ${userid}    ${id from}    ${id to}    ${object id}
     Should Be True    ${bool}    could not find audit log event of moving object ${objectname}
+    Log    gonna wait for waitwindow
     Wait Until Element Is Not Visible    id=waitwindow
+    Log    done waiting
     Wait Until Element Contains    id=bar${id to}    ${objectname}
     ${bool}=    Get Object Id By Name    ${vault to}    ${objectname}
     Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault to}
@@ -113,3 +115,23 @@ Decrypt Object Information
     Wait Until Page Contains Element    xpath=//*[contains(@id,":${object id}:")]/span
     ${content}=    Get Text    xpath=//*[contains(@id,":${object id}:")]/span
     Return From Keyword    ${content}
+
+Move Object
+    [Arguments]    ${user}    ${vault from}    ${vault to}    ${objectname}
+    ${id from}=    Get Vault Id    ${vault from}
+    ${id to}=    Get Vault Id By Name    ${vault to}
+    ${bool}=    Get Object Id By Name    ${vault from}    ${objectname}
+    Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault from}
+    Open Vault by Id    ${id from}
+    Open Vault by Id    ${id to}
+    ${object id}=    Get Object Id By Name    ${vault from}    ${objectname}
+    ${o type}=    Get Object Type    ${objectname}
+    Wait Until Element Is Visible    id=mod_${id from}_${o type}_${object id}
+    Select Checkbox    id=mod_${id from}_${o type}_${object id}
+    Click Element    ${button move}${id from}
+    Click Element    ${button paste}${id to}
+    Confirm Action
+    ${userid}=    Get User Id    ${user}
+    ${bool}=    Audit Event Object Moved    ${userid}    ${id from}    ${id to}    ${object id}
+    Should Be True    ${bool}    could not find audit log event of moving object ${objectname}
+    Wait Until Element Is Not Visible    id=waitwindow    10

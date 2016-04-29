@@ -80,5 +80,8 @@ def audit_event_vault_created(username,vaultname):
 def audit_event_object_copied(userid,vault_from,vault_to,objectid):
     return s_db.audit_event_object_copied(userid,vault_from,vault_to,objectid)
 
+def audit_event_object_moved(userid,vault_from,vault_to,objectid):
+    return s_db.audit_event_object_moved(userid,vault_from,vault_to,objectid)
+
 def audit_event_object_decryption(userid,vaultid,objectid):
     return s_db.audit_event_object_decryption(userid,vaultid,objectid)

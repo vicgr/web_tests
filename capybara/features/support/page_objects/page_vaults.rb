@@ -102,11 +102,20 @@ class Page_vaults < Page_logged_in
     return true
   end
 
+  def self.cut_object(vault_from_id,objectname)
+    self.openVault(vault_from_id)
+    o_type = C_Support.get_object_type(objectname)
+    objectid = C_Support.get_object_id(vault_from_id,objectname)
+    check "mod_#{vault_from_id}_#{o_type}_#{objectid}"
+    find(:css, "[id='move_#{vault_from_id}']") .click
+    return true
+  end
+
   def self.paste_object(vault_to_id)
     self.openVault(vault_to_id)
     find(:css, "[id='paste_#{vault_to_id}']") .click
     page.driver.browser.switch_to.alert .accept
     return true
   end
-
+  
 end

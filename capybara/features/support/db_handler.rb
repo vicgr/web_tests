@@ -155,4 +155,12 @@ class Db_handler
        end
        return false
      end
+
+     def auditlog_verify_object_moved(userid, v_id_f, o_id, v_id_t)
+         query = "select id from ss_log where userid=#{userid} and groupid=#{v_id_f} and objectid=#{o_id} and event like '%MOVE TO VAULT: #{v_id_t}%'"
+         execute_log_query(query).each do |row|
+           return row
+         end
+         return false
+       end
 end

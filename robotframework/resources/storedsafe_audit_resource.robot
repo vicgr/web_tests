@@ -23,3 +23,12 @@ audit log object copied
     ${id object}=    Get Object Id By Name    ${vault from}    ${object}
     ${bool}=    Audit Event Object Copied    ${id user}    ${id from}    ${id to}    ${id object}
     Should Be True    ${bool}    expected copy event for ovject ${object} from ${vault from} to ${vault to} in audit log, but could not find one
+
+Audit log Object Moved
+    [Arguments]    ${user}    ${vault from}    ${vault to}    ${object}
+    ${id user}=    Get User Id    ${user}
+    ${id from}=    Get Vault Id By Name    ${vault from}
+    ${id to}=    Get Vault Id By Name    ${vault to}
+    ${id object}=    Get Object Id By Name    ${vault from}    ${object}
+    ${bool}=    Audit Event Object Moved    ${id user}    ${id from}    ${id to}    ${id object}
+    Should Be True    ${bool}    expected copy event for ovject ${object} from ${vault from} to ${vault to} in audit log, but could not find one

@@ -122,6 +122,10 @@ def audit_event_object_copied(userid,vault_from,vault_to,objectid):
     query = "select id from ss_log where userid={} and objectid = {} and groupid = {} and event like '%COPY TO VAULT: {}%'".format(userid,objectid,vault_from,vault_to)
     return audit_execute(query)
 
+def audit_event_object_moved(userid,vault_from,vault_to,objectid):
+    query = "select id from ss_log where userid={} and objectid = {} and groupid = {} and event like '%MOVED TO VAULT: {}%'".format(userid,objectid,vault_from,vault_to)
+    return audit_execute(query)
+
 
 def audit_event_object_decryption(userid, v_id, o_id):
     query = "select id from ss_log where userid={} and groupid={} and objectid={} and event like '%ALARM DECRYPTED%'".format(

@@ -58,3 +58,8 @@ copy object
     ${cont2}=    Decrypt Object Information    test_admin    v_test_vault_2    v_test_object_2
     audit log object decrypted    test_admin    v_test_vault_2    v_test_object_2
     Should Be Equal As Strings    ${cont1}    ${cont2}    Encrypted information of copied objects has changed
+
+move object
+    [Setup]    open browser    ${url base}    browser=gc
+    login to storedsafe    test_admin
+    Move Object    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_2
