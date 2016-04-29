@@ -49,7 +49,7 @@ class PageVaults(PageObject):
     def close_vault(self,vaultname):
         id = constants.get_vaultsid(vaultname)
         for v in self.vault_list:
-            if v.get_attribute('id') == 'bartitle'+id:
+            if v.get_attribute('id') == "bartitle{}".format(id):
                 if v.get_attribute('class') == 'bars _on':
                     v.click()
                     return
@@ -123,6 +123,16 @@ class PageVaults(PageObject):
             return False
         try:
             self.driver.find_element_by_id('copy_'+constants.get_vaultsid(vaultname)).click()
+        except:
+            return False
+        return True
+
+    def move_object(self,vaultname,objectname):
+        a = self.mark_object(vaultname, objectname)
+        if not a:
+            return False
+        try:
+            self.driver.find_element_by_id('move_' + constants.get_vaultsid(vaultname)).click()
         except:
             return False
         return True

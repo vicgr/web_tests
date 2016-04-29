@@ -84,8 +84,10 @@ class Db_handler
   end
 
   def get_newest_item_id(vaultid,objectname)
-    execute_query("select MAX(id) from ss_objects where groupid = #{vaultid} and objectname='#{objectname}'").each do |row|
-      return row[0]
+    execute_query("select id,status from ss_objects where groupid = #{vaultid} and objectname='#{objectname}'").each do |row|
+      if Db_status.new(row[1]) .is_active
+        return row[0]
+      end
     end
     return false
   end
@@ -157,7 +159,7 @@ class Db_handler
      end
 
      def auditlog_verify_object_moved(userid, v_id_f, o_id, v_id_t)
-         query = "select id from ss_log where userid=#{userid} and groupid=#{v_id_f} and objectid=#{o_id} and event like '%MOVE TO VAULT: #{v_id_t}%'"
+         query = "select id from ss_log where userid=#{userid} and groupid=#{v_id_f} and objectid=#{o_id} and event like '%MOVED TO VAULT: #{v_id_t}%'"
          execute_log_query(query).each do |row|
            return row
          end

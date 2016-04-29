@@ -47,7 +47,7 @@ When(/^"([^"]*)" copies object "([^"]*)" from "([^"]*)" to "([^"]*)"$/) do |user
   assert C_Support.get_db_handler.auditlog_verify_object_decryption(userid, v_from, o_id),"expected decryption event for #{objectname} in #{vault_from} in audit log"
 
   assert Page_vaults.copy_object(v_from,objectname), "expected to be able to copy object #{objectname} in #{vault_from}"
-  assert Page_vaults.paste_object(v_to), "expected to be able to paste object #{objectname} in #{vault_to}"
+  assert Page_vaults.paste_object(v_from,v_to), "expected to be able to paste object #{objectname} in #{vault_to}"
   assert Page_vaults.isObjectInVault(v_to,objectname),"expected to find object "+objectname+" in vault " +vault_to+", but could not"
 
   data2 = Page_vaults.read_encrypted_data(vault_to,objectname)
@@ -72,11 +72,11 @@ When(/^"([^"]*)" moves object "([^"]*)" from "([^"]*)" to "([^"]*)"$/) do |user,
   assert C_Support.get_db_handler.auditlog_verify_object_decryption(userid, v_from, o_id),"expected decryption event for #{objectname} in #{vault_from} in audit log"
 
   assert Page_vaults.cut_object(v_from,objectname), "expected to be able to cut object #{objectname} in #{vault_from}"
-  assert Page_vaults.paste_object(v_to), "expected to be able to paste object #{objectname} in #{vault_to}"
+  assert Page_vaults.paste_object(v_from,v_to), "expected to be able to paste object #{objectname} in #{vault_to}"
   assert Page_vaults.isObjectInVault(v_to,objectname),"expected to find object "+objectname+" in vault " +vault_to+", but could not"
 
   data2 = Page_vaults.read_encrypted_data(vault_to,objectname)
-  o_id = C_Support.get_db_handler.get_newest_item_id(v_to,objectname)
+
   assert data2, "could not read encrypted data from #{objectname} in #{vault_to}"
   assert C_Support.get_db_handler.auditlog_verify_object_decryption(userid, v_to, o_id), "expected decryption event for #{objectname}:#{o_id} in #{vault_to},#{v_to} in audit log"
 

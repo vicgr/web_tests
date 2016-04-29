@@ -43,6 +43,7 @@ Then(/^log event object "([^"]*)" moved by "([^"]*)", from "([^"]*)" to "([^"]*)
   userid = C_Support.get_user_id(username)
   v_id_f = C_Support.get_vault_id(vault_from)
   v_id_t = C_Support.get_vault_id(vault_to)
-  o_id = C_Support.get_object_id(v_id_f,objectname)
+  o_id = C_Support.get_object_id(v_id_t,objectname)
   assert C_Support.get_db_handler.auditlog_verify_object_moved(userid, v_id_f, o_id, v_id_t)
+
 end

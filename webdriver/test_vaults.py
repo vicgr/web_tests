@@ -106,11 +106,10 @@ class vault_tests:
     def copy_object(page,reporter, username, vault_from,vault_to, objectname):
 
         #--TODO: for paste object: refactor to reuse code
-
         try:
             assert page.verify_on_vaults_page()
         except AssertionError:
-            reporter.add_failure(6, "copy object test", "could not start", "initialization unsuccessful")
+            reporter.add_failure(10, "copy object test", "could not start", "initialization unsuccessful")
             return page
 
         userid = constants.get_user(username)[2]
@@ -118,7 +117,7 @@ class vault_tests:
         try:
             assert status.has_write() or status.has_admin()
         except AssertionError:
-            reporter.add_failure(6, "copy object test",
+            reporter.add_failure(10, "copy object test",
                                  username + " expected to have admin or write privilege",
                                  "user did not have admin or write privilege")
             return page
@@ -129,34 +128,33 @@ class vault_tests:
         try:
             assert page.copy_object(vault_from, objectname)
         except AssertionError:
-            reporter.add_failure(6, "copy object test", "could not find or choose the object "+objectname,"expected to find it")
+            reporter.add_failure(10, "copy object test", "could not find or choose the object "+objectname,"expected to find it")
             return page
 
         try:
             assert page.paste_object(vault_to)
         except AssertionError:
-            reporter.add_failure(6, "copy object test", "could not paste object "+objectname +" to "+ vault_to,"expected to be able to paste")
+            reporter.add_failure(10, "copy object test", "could not paste object "+objectname +" to "+ vault_to,"expected to be able to paste")
             return page
 
-        if data_from:
-            #if has decryptable info
+        if data_from: #if has decryptable info
             try:
                 data_to = vault_tests.read_data(page, vault_to, objectname,userid,reporter,[6,"copy object test"])
             except:
                 data_to = False
             try:
-                assert data_from == data_to
+                if data_to:
+                    assert data_from == data_to
             except AssertionError:
-                reporter.add_failure(6, "copy object test","the copied objects encrypted data was not the same as that of the original object",
+                reporter.add_failure(10, "copy object test","the copied objects encrypted data was not the same as that of the original object",
                                      "expected encrypted data not to have changed")
                 return page
         else:
             try:
                 assert constants.db_handler.get_new_created_item_in_vault_by_name(objectname,constants.db_handler.get_new_vault_id(vault_to))
             except AssertionError:
-                reporter.add_failure(6,"copy object test","expected to find object {} in vault {} in database".format(objectname,vault_to),"could not")
+                reporter.add_failure(10,"copy object test","expected to find object {} in vault {} in database".format(objectname,vault_to),"could not")
                 return page
-
         try:
             object = constants.get_object(objectname)
             o_id = object[0]
@@ -168,14 +166,97 @@ class vault_tests:
         try:
             assert constants.db_handler.expect_event_object_copied(userid,v_id_f,o_id,v_id_t)
         except AssertionError:
-            reporter.add_failure(6, "copy object test",
+            reporter.add_failure(10, "copy object test",
                                  "expected to find event COPY OBJECT for {} from {} to {} in audot log".format(
                                      objectname, vault_from, vault_to), "no such log was found")
             return page
 
-        reporter.add_success(6, "copy object test",
+        reporter.add_success(10, "copy object test",
                              "correctly copied object {} from {} to {}".format(objectname, vault_from, vault_to))
         return page
+
+    def move_object(page,reporter, username, vault_from,vault_to, objectname):
+        try:
+            assert page.verify_on_vaults_page()
+        except AssertionError:
+            reporter.add_failure(15, "move object test", "could not start", "initialization unsuccessful")
+            return page
+
+        userid = constants.get_user(username)[2]
+        status = constants.db_handler.get_user_by_id(userid).status
+        try:
+            assert status.has_write() or status.has_admin()
+        except AssertionError:
+            reporter.add_failure(15, "move object test",
+                                 username + " expected to have admin or write privilege",
+                                 "user did not have admin or write privilege")
+            return page
+        try:
+            data_from = vault_tests.read_data(page, vault_from, objectname)
+        except:
+            data_from = False
+        try:
+            assert page.move_object(vault_from, objectname)
+        except AssertionError:
+            reporter.add_failure(15, "move object test", "could not find or choose the object " + objectname,
+                                 "expected to find it")
+            return page
+
+        try:
+            assert page.paste_object(vault_to)
+        except AssertionError:
+            reporter.add_failure(15, "move object test", "could not paste object " + objectname + " to " + vault_to,
+                                 "expected to be able to paste")
+            return page
+        page.close_vault(vault_from)
+        page.close_vault(vault_to)
+        page.open_vault(vault_to)
+
+
+        if data_from:  # if has decryptable info
+            try:
+                data_to = vault_tests.read_data(page, vault_to, objectname, userid, reporter, [15, "move object test"])
+            except:
+                data_to = False
+            try:
+                if data_to:
+                    assert data_from == data_to
+            except AssertionError:
+                reporter.add_failure(15, "move object test",
+                                     "the copied objects encrypted data was not the same as that of the original object",
+                                     "expected encrypted data not to have changed")
+                return page
+        else:
+            try:
+                assert constants.db_handler.get_new_created_item_in_vault_by_name(objectname,
+                                                                                  constants.db_handler.get_new_vault_id(
+                                                                                      vault_to))
+            except AssertionError:
+                reporter.add_failure(15, "move object test",
+                                     "expected to find object {} in vault {} in database".format(objectname, vault_to),
+                                     "could not")
+                return page
+        try:
+            object = constants.get_object(objectname)
+            #o_id = object[0]
+            v_id_f = object[1]
+        except KeyError:
+            v_id_f = constants.db_handler.get_new_vault_id(vault_from)
+        v_id_t = constants.db_handler.get_new_vault_id(vault_to)
+        o_id = constants.db_handler.get_new_created_item_in_vault_by_name(objectname, v_id_t)
+        try:
+            assert constants.db_handler.expect_event_object_moved(userid, v_id_f, o_id, v_id_t)
+        except AssertionError:
+            reporter.add_failure(15, "move object test",
+                                 "expected to find event MOVED OBJECT for {} from {} to {} in audit log".format(
+                                     objectname, vault_from, vault_to), "no such log was found")
+            return page
+
+        reporter.add_success(15, "move object test",
+                             "correctly moved object {} from {} to {}".format(objectname, vault_from, vault_to))
+        return page
+
+
 
     def read_data(page,vaultname,objectname,userid=None,reporter=None,case=None):
         try:

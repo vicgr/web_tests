@@ -22,6 +22,12 @@ class Page_vaults < Page_logged_in
     end
   end
 
+  def self.closeVault(v_id)
+    if isVaultOpen?(v_id)
+      find(:css, "[id = 'bartitle#{v_id}']").click
+    end
+  end
+
   def self.isVaultOpen?(v_id)
     return find(:css, "[id = 'bartitle#{v_id}']")['class'] == 'bars _on'
   end
@@ -111,11 +117,17 @@ class Page_vaults < Page_logged_in
     return true
   end
 
-  def self.paste_object(vault_to_id)
+  def self.paste_object(vault_from_id,vault_to_id)
     self.openVault(vault_to_id)
     find(:css, "[id='paste_#{vault_to_id}']") .click
     page.driver.browser.switch_to.alert .accept
+
+    self.closeVault(vault_from_id)
+    self.closeVault(vault_to_id)
+    #self.openVault(vault_from_id)
+    self.openVault(vault_to_id)
+
     return true
   end
-  
+
 end

@@ -51,7 +51,10 @@ def get_user(username):
     return userlogins[username]
 
 def get_vaultsid(vaultname):
-    return vaults[vaultname]
+    try:
+        return vaults[vaultname]
+    except KeyError:
+        return db_handler.get_new_vault_id(vaultname)
 
 def get_newitem_server(itemname):
     return item_server[itemname]

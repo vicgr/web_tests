@@ -42,7 +42,6 @@ class db_executor(object):
         r = []
         for i in self.cursor:
             r.append(i)
-            #TODO: print(i)
 
         self.last_result = r
 
@@ -102,9 +101,13 @@ class DB_handler(object):
         return obj_status(self.db_exec.execute_query(query)[0][0])
 
     def get_new_created_item_in_vault_by_name(self,itemname, vaultid):
-
-        query = "select MAX(id) from ss_objects where groupid = {} and objectname='{}'".format(vaultid, itemname)
-        return self.db_exec.execute_query(query)[0][0]
+        query = "select id,status from ss_objects where groupid = {} and objectname='{}'".format(vaultid, itemname)
+        res =  self.db_exec.execute_query(query)
+        for row in res:
+            stat=obj_status(row[1])
+            if stat.is_active():
+                return row[0]
+        return False
 
     def get_new_object_type(self, o_id,vaultid):
         query = "select template from ss_objects where id={} and groupid={}".format(o_id,vaultid)
@@ -160,6 +163,13 @@ class DB_handler(object):
         query = "select id from ss_log where userid={} and groupid={} and objectid={} and event like '%COPY TO VAULT: {}%'".format(
             userid,v_id_f,o_id,v_id_t
         )
+        return self.db_exec.execute_log_query(query)
+
+    def expect_event_object_moved(self, userid, v_id_f, o_id, v_id_t):
+        query = "select id from ss_log where userid={} and groupid={} and objectid={} and event like '%MOVED TO VAULT: {}%'".format(
+            userid, v_id_f, o_id, v_id_t
+        )
+        print(query)
         return self.db_exec.execute_log_query(query)
 
 
