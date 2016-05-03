@@ -54,11 +54,13 @@ Scenario: admin smoke
   And log event vault created for user "test_admin" for vault "v_test_vault_2" is in log
   When "test_admin" copies object "v_test_object_2" from "v_test_vault_1" to "v_test_vault_2"
   Then log event object "v_test_object_2" copied by "test_admin", from "v_test_vault_1" to "test_vault_2"
+  #When "test_admin" moves object "v_test_object_2" from "v_test_vault_1" to "v_test_vault_2"
+  #Then log event object "v_test_object_2" moved by "test_admin", from "v_test_vault_1" to "v_test_vault_2"
 
 
 @item
-Scenario: create item
+Scenario: test set
   Given I am on loginpage
   And I login as "test_admin"
-  When "test_admin" moves object "v_test_object_2" from "v_test_vault_1" to "v_test_vault_2"
-  Then log event object "v_test_object_2" moved by "test_admin", from "v_test_vault_1" to "v_test_vault_2"
+  When "test_admin" deletes object "v_test_object_2" in vault "v_test_vault_2"
+  Then log event object "v_test_object_2" in vault "v_test_vault_2" deleted by "test_admin"

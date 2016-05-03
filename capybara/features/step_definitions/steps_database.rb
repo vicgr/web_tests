@@ -45,5 +45,10 @@ Then(/^log event object "([^"]*)" moved by "([^"]*)", from "([^"]*)" to "([^"]*)
   v_id_t = C_Support.get_vault_id(vault_to)
   o_id = C_Support.get_object_id(v_id_t,objectname)
   assert C_Support.get_db_handler.auditlog_verify_object_moved(userid, v_id_f, o_id, v_id_t)
-
+end
+Then(/^log event object "([^"]*)" in vault "([^"]*)" deleted by "([^"]*)"$/) do |objectname, vaultname, username|
+  userid = C_Support.get_user_id(username)
+  vaultid = C_Support.get_vault_id(vaultname)
+  #objectid = C_Support.get_object_id(vaultid,objectname)
+  assert C_Support.get_db_handler.auditlog_verify_object_deleted(userid, vaultid, objectname)
 end

@@ -82,3 +82,13 @@ When(/^"([^"]*)" moves object "([^"]*)" from "([^"]*)" to "([^"]*)"$/) do |user,
 
   assert data1==data2, "expected the copied objects encyypted data to not have changed"
 end
+
+When(/^"([^"]*)" deletes object "([^"]*)" in vault "([^"]*)"$/) do |username, objectname, vaultname|
+  userid = C_Support.get_user_id (username)
+  vaultid = C_Support.get_vault_id(vaultname)
+  objectid = C_Support.get_object_id(vaultid,objectname)
+  Page_vaults.openVault(vaultid)
+  assert Page_vaults.isObjectInVault(vaultid,objectname), "expected to find object "+objectname+" in vault " +vaultname+", but could not"
+  Page_vaults.delete_object(vaultid,objectid,C_Support.get_object_type(objectname))
+  assert Page_vaults.isObjectNotInVault(vaultid,objectname)
+end

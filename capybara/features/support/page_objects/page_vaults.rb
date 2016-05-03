@@ -54,6 +54,10 @@ class Page_vaults < Page_logged_in
     return find(:css,"[id=bar#{vaultid}]").has_content?(objectname)
   end
 
+  def self.isObjectNotInVault(vaultid,objectname)
+    return find(:css,"[id=bar#{vaultid}]").has_no_content?(objectname)
+  end
+
   def self.create_new_item_server(vaultid, itemname)
     openVault(vaultid)
     click_button "bar#{vaultid}add"
@@ -124,9 +128,26 @@ class Page_vaults < Page_logged_in
 
     self.closeVault(vault_from_id)
     self.closeVault(vault_to_id)
-    #self.openVault(vault_from_id)
     self.openVault(vault_to_id)
 
+    return true
+  end
+
+  def self.delete_object(vaultid,objectid,objecttype)
+    self.openVault(vaultid)
+    #check "mod_#{vaultid}_#{objecttype}_#{objectid}"
+    find(:css, "[id='link-#{objectid}']") .click
+    if(objecttype != '8' and objecttype != '9')
+      #if enters workbench
+      click_button "editbtn##{objectid}"
+      #find("editbtn##{objectid}") .click
+    end
+    click_button "deletebutton"
+    page.driver.browser.switch_to.alert .accept
+
+    self.isAtVaultsPage
+    self.closeVault(vaultid)
+    self.openVault(vaultid)
     return true
   end
 
