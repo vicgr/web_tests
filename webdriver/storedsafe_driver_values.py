@@ -15,6 +15,7 @@ item_server = {}
 vaults = {}
 newvaults = {}
 objects = {}
+object_types={}
 
 path_self = os.path.dirname(__file__)
 
@@ -35,12 +36,14 @@ for obj in l:
     elif a['__type__'] == 'vault':
         vaults[a['vaultname']] = a['vaultid']
     elif a['__type__'] == 'newitem':
+        object_types[a['itemname']] = a['type']
         if a['itemtype'] == 'server':
             item_server[a['itemname']] = [a['host'], a['username'], a['password'], a['alert if decrypted'],
                                       a['information'], ['sensitive information']]
     elif a['__type__'] == 'newvault':
         newvaults[a['vaultname']] = [a['policy'],a['information']]
     elif a['__type__'] == 'object':
+        object_types[a['objectname']] = a['objecttype']
         objects[a['objectname']] = [a['objectid'],a['vaultid'],a['objecttype']]
 
 
@@ -64,6 +67,9 @@ def get_newvault_info(vaultname):
 
 def get_object(objectname):
     return objects[objectname]
+
+def get_object_type(objectname):
+    return object_types[objectname]
 
 #url constants
 url_base = "https://t1.storedsafe.com/"

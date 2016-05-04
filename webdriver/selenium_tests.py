@@ -61,12 +61,15 @@ def run_tests(driver):
 
     import test_vaults
     #test_vaults.vault_tests.create_new_vault(page,reporter,'test_admin','v_test_vault_2')
-    test_vaults.vault_tests.open_vault(page,'v_test_vault_1')
+    #test_vaults.vault_tests.open_vault(page,'v_test_vault_1')
     #test_vaults.vault_tests.create_new_server_item(None,page,reporter,'test_admin','v_test_vault_1','v_test_object_2')
     #test_vaults.vault_tests.copy_object(page,reporter,'test_admin','v_test_vault_1','v_test_vault_2','v_test_object_2')
-    test_vaults.vault_tests.move_object(page, reporter, 'test_admin', 'v_test_vault_1', 'v_test_vault_2','v_test_object_2')
+    #test_vaults.vault_tests.move_object(page, reporter, 'test_admin', 'v_test_vault_1', 'v_test_vault_2','v_test_object_2')
     #page = login_test.logout(driver,page, reporter, username='test_admin')
     #page = test_vaults.vault_tests.read_data(page,reporter,'test_admin','v_test_vault_1','v_test_object_2')
+    #test_vaults.vault_tests.delete_object(page,reporter,'test_admin','v_test_vault_2','v_test_object_2')
+    test_vaults.vault_tests.try_delete_non_empty_vault(page,reporter,'test_admin','v_test_vault_2')
+
 
 def end_tests():
     reporter.printreport()

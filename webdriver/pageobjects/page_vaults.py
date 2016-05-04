@@ -173,6 +173,35 @@ class PageVaults(PageObject):
             return False
         return True
 
+    def delete_vault(self,vaultid):
+        try:
+            self.open_vault_by_id(vaultid)
+            self.driver.find_element_by_id("bar{}edit".format(vaultid)).click()
+            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, "popupwindow")))
+            self.driver.find_element_by_id("deletebutton").click()
+
+            Alert(self.driver).accept()
+            WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.ID, "popupwindow")))
+        except:
+            return False
+        return True
+
+
+    def delete_object(self,vaultid,objectid,objecttype):
+        try:
+            self.open_vault_by_id(vaultid)
+            self.driver.find_element_by_id("link-{}".format(objectid)).click()
+            if(objecttype!='8' or objecttype != '9'):
+                self.driver.find_element_by_id("editbtn#{}".format(objectid)).click()
+            WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, "popupwindow")))
+            self.driver.find_element_by_id('deletebutton').click()
+            Alert(self.driver).accept()
+            WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.ID, "popupwindow")))
+        except:
+            return False
+        return True
+
+
 
 
 

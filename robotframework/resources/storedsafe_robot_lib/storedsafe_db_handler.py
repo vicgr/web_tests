@@ -131,3 +131,7 @@ def audit_event_object_decryption(userid, v_id, o_id):
     query = "select id from ss_log where userid={} and groupid={} and objectid={} and event like '%ALARM DECRYPTED%'".format(
         userid, v_id, o_id)
     return audit_execute(query)
+
+def audit_event_object_deleted(userid,vaultid,objectname):
+    query = "select id from ss_log where userid= {} and groupid={} and event like '%OBJECT DELETED:{}%'".format(userid,vaultid,objectname)
+    return audit_execute(query)

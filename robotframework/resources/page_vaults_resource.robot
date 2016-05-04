@@ -135,3 +135,21 @@ Move Object
     ${bool}=    Audit Event Object Moved    ${userid}    ${id from}    ${id to}    ${object id}
     Should Be True    ${bool}    could not find audit log event of moving object ${objectname}
     Wait Until Element Is Not Visible    id=waitwindow    10
+
+Delete Object
+    [Arguments]    ${username}    ${vaultname}    ${objectname}
+    ${type}=    Get Object Type    ${objectname}
+    ${objectid}=    Get Object Id By Name    ${vaultname}    ${objectname}
+    ${vaultid}=    Get Vault Id By Name    ${vaultname}
+    Open Vault by Id    ${vaultid}
+    Wait Until Element Is Not Visible    waitwindow
+    Click Element    link-${objectid}
+    Run Keyword If    ${type}!='8' and ${type}!='9'    Click Button    editbtn#${objectid}
+    Wait Until Element Is Visible    popupwindow
+    Click Button    deletebutton
+    Confirm Action
+    verify on vaults page
+    Open Vault by Id    ${vaultid}
+    ${userid}=    Get User Id    ${username}
+    ${bool}=    Audit Event Object Deleted    ${userid}    ${vaultid}    ${objectname}
+    Should Be True    ${bool}

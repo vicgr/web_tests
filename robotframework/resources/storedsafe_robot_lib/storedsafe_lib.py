@@ -85,3 +85,6 @@ def audit_event_object_moved(userid,vault_from,vault_to,objectid):
 
 def audit_event_object_decryption(userid,vaultid,objectid):
     return s_db.audit_event_object_decryption(userid,vaultid,objectid)
+
+def audit_event_object_deleted(userid,vaultid,objectname):
+    return s_db.audit_event_object_deleted(userid,vaultid,objectname)

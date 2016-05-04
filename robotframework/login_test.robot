@@ -63,3 +63,8 @@ move object
     [Setup]    open browser    ${url base}    browser=gc
     login to storedsafe    test_admin
     Move Object    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_2
+
+delete object
+    [Setup]    open browser    ${url base}    browser=ff
+    login to storedsafe    test_admin
+    Delete Object    test_admin    v_test_vault_2    v_test_object_2

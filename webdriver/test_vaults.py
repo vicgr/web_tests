@@ -273,3 +273,109 @@ class vault_tests:
             except AssertionError:
                 reporter.add_failure(case[0],case[1],"expected to find decryption event for object {}".format(objectname),"could not find decryption event")
         return data
+
+    def delete_object(page,reporter,user,vaultname,objectname):
+        try:
+            assert page.verify_on_vaults_page()
+        except AssertionError:
+            reporter.add_failure(17, "delete object test", "could not start, not on the vaults page", "initialization unsuccessful")
+            return page
+        try:
+            assert page.open_vault(vaultname)
+        except AssertionError:
+            reporter.add_failure(17, "delete object test","tried to open vault {}".format(vaultname), "could not find vault {} in list of vaults".format(vaultname))
+            return page
+
+        try:
+            userid = constants.get_user(user)[2]
+            objecttype = constants.get_object_type(objectname)
+        except KeyError:
+            reporter.add_failure(17, "delete object test","could not find user {} or object type of {} from file".format(user,objectname),"verify that these are entered correctly")
+            return page
+        try:
+            ob = constants.get_object(objectname)
+            objectid = ob[0]
+            vaultid = ob[1]
+        except KeyError:
+            vaultid = constants.db_handler.get_new_vault_id(vaultname)
+            objectid = constants.db_handler.get_new_created_item_in_vault_by_name(objectname, vaultid)
+
+        try:
+            assert page.delete_object(vaultid,objectid,objecttype)
+        except AssertionError:
+            reporter.add_failure(17, "delete object test", "could not delete object {} in vault {}".format(objectname,vaultname), "expected to be able to do this as user {}".format((user)))
+            return page
+        try:
+            assert constants.db_handler.expect_event_object_deleted(userid,vaultid,objectid,objectname)
+        except AssertionError:
+            reporter.add_failure(17, "delete object test","expected an delete-event for object {} in vault {}".format(objectname,vaultname),"could not find such an event")
+        reporter.add_success(17, "delete object test","correcylt deleted object {} in vault".format(objectname,vaultname))
+        return page
+
+    def try_delete_non_empty_vault(page,reporter,username,vaultname):
+        try:
+            assert page.verify_on_vaults_page()
+        except AssertionError:
+            reporter.add_failure(20, "try to delete non-empty vault", "could not start, not on the vaults page",
+                                 "initialization unsuccessful")
+            return page
+        try:
+            userid = constants.get_user(username)[2]
+            vaultid = constants.db_handler.get_new_vault_id(vaultname)
+        except:
+            reporter.add_failure(20,"try to delete non-empty vault","could not find id:s for user {} or vault {}".format(username,vaultname),"verify that these are correct")
+            return page
+        try:
+            status = constants.db_handler.get_user_vault_membership(userid,vaultid)
+            assert status
+        except AssertionError:
+            reporter.add_failure(20, "try to delete non-empty vault",
+                                 "expected user {} to be a mamber of vault {}".format(username, vaultname),
+                                 "User was not member of vault")
+            return page
+        try:
+            assert status.has_admin()
+        except AssertionError:
+            reporter.add_failure(20, "try to delete non-empty vault",
+                                 "expected user {} to be admin in vault {}".format(username, vaultname),
+                                 "User was not admin in vault")
+            return page
+
+        try:
+            assert constants.db_handler.count_objects_in_vault(vaultid) > 0
+            print(constants.db_handler.count_objects_in_vault(vaultid))
+        except AssertionError:
+            reporter.add_failure(20,"try to delete non-empty vault","expected vault {} to not be empty".format(vaultname),"vault contains no objects")
+            return page
+
+        try:
+            assert page.delete_vault(vaultid)
+        except AssertionError:
+            reporter.add_failure(20, "try to delete non-empty vault",
+                                 "Expected to be able to go through the entire delete-vault procedure for vault {}".format(
+                                     vaultname),"Failed to do so")
+            return page
+        try:
+            assert page.driver.find_element_by_id("errorwindow").text == "Vault cannot be deleted with active items"
+        except AssertionError:
+            reporter.add_failure(20, "try to delete non-empty vault","Expected to find error message on page","Could not")
+            return page
+
+
+        try:
+            assert constants.db_handler.get_new_vault_id(vaultname)
+        except AssertionError:
+            reporter.add_failure(20, "try to delete non-empty vault", "Expected vault {} to not be deleted",
+                                 "Could not find any active vaults with that name in the database")
+            return page
+
+        reporter.add_success(20, "try to delete non-empty vault",
+                             "tried to delete vault {} when it was not empty - deletion failed as expected".format(
+                                 vaultname))
+        return page
+
+
+
+
+
+

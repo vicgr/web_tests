@@ -113,9 +113,28 @@ class DB_handler(object):
         query = "select template from ss_objects where id={} and groupid={}".format(o_id,vaultid)
         return self.db_exec.execute_query(query)[0][0]
 
+    #def get_new_vault_id(self,vaultname):
+    #    query = "select MAX(id) from ss_groups where groupname = '{}'".format(vaultname)
+    #    return self.db_exec.execute_query(query)[0][0]
+
     def get_new_vault_id(self,vaultname):
-        query = "select MAX(id) from ss_groups where groupname = '{}'".format(vaultname)
-        return self.db_exec.execute_query(query)[0][0]
+        query = "select id, status from ss_groups where groupname = '{}' order by id desc".format(vaultname)
+        res = self.db_exec.execute_query(query)
+        for row in res:
+            if obj_status(row[1]).is_active():
+                return row[0]
+        return False
+
+    def count_objects_in_vault(self, vaultid):
+        query = "select id,status from ss_objects where groupid = {}".format(vaultid)
+        res = self.db_exec.execute_query(query)
+        objs = 0
+        for row in res:
+            stat = obj_status(row[1])
+            if stat.is_active():
+                objs+=1
+        return objs
+
 
 
     def expect_event_auth_failure(self): #any failed login?
@@ -169,7 +188,11 @@ class DB_handler(object):
         query = "select id from ss_log where userid={} and groupid={} and objectid={} and event like '%MOVED TO VAULT: {}%'".format(
             userid, v_id_f, o_id, v_id_t
         )
-        print(query)
+        return self.db_exec.execute_log_query(query)
+
+    def expect_event_object_deleted(self,userid,vaultid,objectid,objectname):
+        query = "select id from ss_log where userid={} and groupid ={} and objectid = {} and event like '%OBJECT DELETED:{}%'".format(
+            userid, vaultid, objectid, objectname)
         return self.db_exec.execute_log_query(query)
 
 
