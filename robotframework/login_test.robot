@@ -10,6 +10,8 @@ Resource          Resources/page_logged_in_resource.robot
 Library           OperatingSystem
 Resource          resources/storedsafe_audit_resource.robot
 Resource          resources/page_vault_newvault_resource.robot
+Resource          Resources/page_vault_newitem_resource.robot
+Resource          Resources/page_vault_delete_vault_resource.robot
 
 *** Variables ***
 
@@ -68,3 +70,8 @@ delete object
     [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
     Delete Object    test_admin    v_test_vault_2    v_test_object_2
+
+try to delete nonempty vault
+    [Setup]    open browser    ${url base}    browser=ff
+    login to storedsafe    test_admin
+    Try to Delete non-empty Vault    test_admin    v_test_vault_2

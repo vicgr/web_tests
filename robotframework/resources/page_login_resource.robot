@@ -17,9 +17,9 @@ verify on login page
     page should contain button    ${login button}
 
 login to storedsafe
-    [Arguments]    @{username}
-    ${keys}=    Get User Keys    @{username}
-    Input Text    ${username field}    @{username}
+    [Arguments]    ${username}
+    ${keys}=    Get User Keys    ${username}
+    Input Text    ${username field}    ${username}
     Input Password    ${password field}    ${keys}
     Click Button    ${login button}
 

@@ -14,6 +14,9 @@ ${button copy}    id=copy_
 ${button move}    id=move_
 ${button paste}    id=paste_
 ${button delete}    id=delete_
+${id bar}         id=bar
+${edit}           edit
+${errorwindow}    id=errorwindow
 
 *** Keywords ***
 verify on vaults page
@@ -34,6 +37,7 @@ Open Vault by Id
     [Arguments]    ${vault id}
     ${class}=    Get Element Attribute    ${vault bar}${vault id}@class
     Run Keyword if    '${class}'=='${vault_closed_class}'    Click Element    ${vault bar}${vault id}
+    Run Keyword If    '${class}'=='${vault_closed_class}'    Wait Until Element Is Not Visible    id=waitwindow
     ${class}=    Get Element Attribute    ${vault bar}${vault id}@class
     Should Be Equal As Strings    ${class}    ${vault_open_class}
 

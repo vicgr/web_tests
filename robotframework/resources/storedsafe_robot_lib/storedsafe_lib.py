@@ -18,12 +18,6 @@ def get_user_fullname(username):
 def get_vault_id(vaultname):
     return s_fh.get_vault_id(vaultname)
 
-def verify_member_of_vault(username, vaultname):
-    return s_fh.verify_member_of_vault(username,vaultname)
-
-def verify_object_in_vault(vault,object):
-    return s_db.verify_object_in_vault(vault,object)
-
 def get_object_id(objectname):
     return s_fh.get_object_id(objectname)
 def get_object_vault(objectname):
@@ -32,13 +26,29 @@ def get_object_type(objectname):
     return s_fh.get_object_type(objectname)
 
 #---OBJECTS IN DATABASE RELATED METHODS---
+def verify_object_in_vault(vault,object):
+    return s_db.verify_object_in_vault(vault,object)
+
 def get_object_id_by_name(vaultname, objectname):
     return s_db.get_object_id_by_name(vaultname,objectname)
 
 def  objects_Should_Be_Similar(vault1,object1,vault2,object2):
     return s_db.objects_Should_Be_Similar(vault1,object1,vault2,object2)
 
-#---GET NEW VAULT INFO---
+def count_objects_in_vault(vaultid):
+    return s_db.count_objects_in_vault(vaultid)
+
+#---METHODS RELATED TO VAULTS IN DATABASE---
+
+def verify_member_of_vault(userid, vaultid):
+    return s_db.verify_member_of_vault(userid,vaultid)
+
+def verify_admin_member_of_vault(userid, vaultid):
+    val = s_db.verify_member_of_vault(userid, vaultid)
+    if val:
+        return val.has_admin()
+    return False
+
 def get_newvault_policy(vaultname):
     return s_fh.get_newvault_policy(vaultname)
 

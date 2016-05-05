@@ -39,6 +39,22 @@ def get_user_fullname(username):
 def verify_object_in_vault(vault,object):
     v_name = s_h.get_vault_id(vault)
 
+def verify_member_of_vault(userid,vaultid):
+    cursor.execute("select status from ss_groupkeys where userid={} and groupid = {}".format(userid,vaultid))
+    res = cursor.fetchall()
+    for row in res:
+        return s_db_objects.obj_status(row[0])
+    return False
+
+def count_objects_in_vault(vaultid):
+    nr = 0
+    cursor.execute("select status from ss_objects where groupid = {}".format(vaultid))
+    res = cursor.fetchall()
+    for row in res:
+        if s_db_objects.obj_status(row[0]).is_active():
+            nr += 1
+    return nr
+
 def get_object_id_by_name(vaultname, objectname): #gets the _latest_ created _active_ object with that name
     v_id = s_h.get_vault_id(vaultname)
     if not v_id:
