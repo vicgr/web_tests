@@ -58,7 +58,8 @@ class Db_handler
   end
 
   def verify_user_is_member_of_vault(u_id,v_id,priv=nil)
-    execute_query("select groupid,userid,status from ss_groupkeys where groupid = #{v_id} and userid = #{u_id}").each do |row|
+    query = "select groupid,userid,status from ss_groupkeys where groupid = #{v_id} and userid = #{u_id}"
+    execute_query(query).each do |row|
       if row.nil?
         return false
       end
@@ -103,6 +104,16 @@ class Db_handler
     execute_query("select status from ss_userbase where id = #{userid}").each do |row|
       return Db_status.new(row[0])
     end
+  end
+
+  def count_objects_in_vault(vaultid)
+    nr =0
+    execute_query("select status from ss_objects where groupid = #{vaultid}").each do |row|
+      if Db_status.new(row[0]) .is_active()
+        nr+=1
+      end
+    end
+    return nr
   end
 
   def auditlog_verify_login(userid) ##Verifies that _any_ login event has happened for the user _after_ @starttime!

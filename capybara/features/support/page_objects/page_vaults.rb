@@ -135,7 +135,6 @@ class Page_vaults < Page_logged_in
 
   def self.delete_object(vaultid,objectid,objecttype)
     self.openVault(vaultid)
-    #check "mod_#{vaultid}_#{objecttype}_#{objectid}"
     find(:css, "[id='link-#{objectid}']") .click
     if(objecttype != '8' and objecttype != '9')
       #if enters workbench
@@ -149,6 +148,25 @@ class Page_vaults < Page_logged_in
     self.closeVault(vaultid)
     self.openVault(vaultid)
     return true
+  end
+
+  def self.delete_vault(vaultid)
+    #assumes user is admin member of vault!
+    self.openVault(vaultid)
+    click_button "bar#{vaultid}edit"
+    click_button "deletebutton"
+    page.driver.browser.switch_to.alert .accept
+
+    return true
+  end
+
+  def self.verify_delete_vault_failed(vaultid)
+
+    val1 = self.isAtVaultsPage()
+    val2 = find_by_id('errorwindow').text == "Vault cannot be deleted with active items"
+    val3 = self.isVaultInList(vaultid)
+
+    return val1 && val2 && val3
   end
 
 end

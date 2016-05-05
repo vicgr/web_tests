@@ -1,5 +1,6 @@
 Given(/^vault "([^"]*)" is in the list of vaults$/) do |vaultname|
-  assert Page_vaults .isVaultInList(C_Support.get_vault_id(vaultname)),vaultname +"with id "+C_Support.get_vault_id(vaultname) +" was expected ot be in the list of vaults: it was not"
+  vaultid = C_Support.get_vault_id(vaultname)
+  assert Page_vaults .isVaultInList(vaultid),"#{vaultname} with id #{vaultid} was expected to be in the list of vaults: it was not"
 end
 
 When(/^I open vault "([^"]*)"$/) do |vaultname|
@@ -90,5 +91,18 @@ When(/^"([^"]*)" deletes object "([^"]*)" in vault "([^"]*)"$/) do |username, ob
   Page_vaults.openVault(vaultid)
   assert Page_vaults.isObjectInVault(vaultid,objectname), "expected to find object "+objectname+" in vault " +vaultname+", but could not"
   Page_vaults.delete_object(vaultid,objectid,C_Support.get_object_type(objectname))
-  assert Page_vaults.isObjectNotInVault(vaultid,objectname)
+  assert Page_vaults.isObjectNotInVault(vaultid,objectname), "expected to not find #{objectname} in #{vaultname}, but did find it"
+end
+
+When(/^"([^"]*)" tries to delete non\-empty vault "([^"]*)"$/) do |username, vaultname|
+  userid = C_Support.get_user_id(username)
+  vaultid = C_Support.get_vault_id(vaultname)
+
+  assert C_Support.get_db_handler.verify_user_is_member_of_vault(userid,vaultid,"admin"), "Expected user #{username} to be admin member of vault #{vaultname}"
+  assert C_Support.get_db_handler.count_objects_in_vault(vaultid) > 0 , "Expected to find objects in vault #{vaultname}, but could not"
+  assert Page_vaults.delete_vault(vaultid), "Expected to be able to complete delete vault procedure steps, but it failed"
+  assert Page_vaults.verify_delete_vault_failed(vaultid),"Could not verify that the vault deletion of #{vaultname} failed!"
+
+
+
 end

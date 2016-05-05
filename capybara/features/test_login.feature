@@ -69,3 +69,5 @@ Scenario: admin smoke
 Scenario: test set
   Given I am on loginpage
   And I login as "test_admin"
+  When "test_admin" tries to delete non-empty vault "v_test_vault_2"
+  Then vault "v_test_vault_2" is in the list of vaults
