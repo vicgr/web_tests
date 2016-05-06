@@ -38,6 +38,7 @@ class PageVaults(PageObject):
             v_ex = True
         except:
             v_ex = False
+
         return str(self.driver.current_url).startswith(constants.url_base+constants.url_vault) and v_ex
 
 
@@ -197,6 +198,18 @@ class PageVaults(PageObject):
             self.driver.find_element_by_id('deletebutton').click()
             Alert(self.driver).accept()
             WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.ID, "popupwindow")))
+        except:
+            return False
+        return True
+
+    def leave_vault(self,userid,vaultid):
+        try:
+            self.open_vault_by_id(vaultid)
+            self.driver.find_element_by_id("bar{}users2".format(vaultid)).click()
+            WebDriverWait(self.driver,10).until(EC.visibility_of_element_located((By.ID,"btnid{}".format(userid))))
+            self.driver.find_element_by_id("btnid{}".format(userid)).click()
+            Alert(self.driver).accept()
+            WebDriverWait(self.driver,10).until((EC.invisibility_of_element_located((By.ID, "waitwindow"))))
         except:
             return False
         return True

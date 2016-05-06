@@ -31,8 +31,6 @@ for obj in l:
         login = [a['password'],a['host'],a['database'],a['user']]
     elif a['__type__'] == 'userlogin':
         userlogins[a['username']] = [a['password'], a['otp'], a['id']]
-    elif a['__type__'] == 'user':
-        True
     elif a['__type__'] == 'vault':
         vaults[a['vaultname']] = a['vaultid']
     elif a['__type__'] == 'newitem':

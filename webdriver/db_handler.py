@@ -135,6 +135,14 @@ class DB_handler(object):
                 objs+=1
         return objs
 
+    def number_of_admins(self,vaultid):
+        query = "select status from ss_groupkeys where groupid = {}".format(vaultid)
+        res = self.db_exec.execute_query(query)
+        admins=0
+        for row in res:
+            if obj_status(row[0]).has_admin():
+                admins+=1
+        return admins
 
 
     def expect_event_auth_failure(self): #any failed login?

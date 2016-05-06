@@ -68,7 +68,9 @@ def run_tests(driver):
     #page = login_test.logout(driver,page, reporter, username='test_admin')
     #page = test_vaults.vault_tests.read_data(page,reporter,'test_admin','v_test_vault_1','v_test_object_2')
     #test_vaults.vault_tests.delete_object(page,reporter,'test_admin','v_test_vault_2','v_test_object_2')
-    test_vaults.vault_tests.try_delete_non_empty_vault(page,reporter,'test_admin','v_test_vault_2')
+    #test_vaults.vault_tests.try_delete_non_empty_vault(page,reporter,'test_admin','v_test_vault_2')
+    #test_vaults.vault_tests.delete_vault(page,reporter,'test_admin','v_test_vault_2')
+    test_vaults.vault_tests.try_leave_vault_as_last_admin(page,reporter,'test_admin','v_test_vault_2')
 
 
 def end_tests():

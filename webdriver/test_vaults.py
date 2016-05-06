@@ -1,3 +1,5 @@
+from dns.hash import get
+
 from pageobjects import page_vaults
 import storedsafe_driver_values as constants
 
@@ -373,6 +375,72 @@ class vault_tests:
                              "tried to delete vault {} when it was not empty - deletion failed as expected".format(
                                  vaultname))
         return page
+
+    def try_leave_vault_as_last_admin(page, reporter, username, vaultname):
+#        page = page_vaults.PageVaults()
+
+        try:
+            assert page.verify_on_vaults_page()
+        except AssertionError:
+            reporter.add_failure(22, "try to leave vault as last admin", "could not start, not on the vaults page",
+                             "initialization unsuccessful")
+            return page
+        try:
+            userid = constants.get_user(username)[2]
+            vaultid = constants.get_vaultsid(vaultname)
+
+            assert constants.db_handler.get_user_vault_membership(userid,vaultid).has_admin()
+        except AssertionError:
+            reporter.add_failure(22, "try to leave vault as last admin",
+                                 "Expected {} to be admin member of {}".format(username, vaultname),
+                                 "Could not verify this")
+            return page
+        except:
+            reporter.add_failure(22, "try to leave vault as last admin",
+                                 "Could not find user {} or vault {} in the database".format(username, vaultname),
+                                 "expected to be able to find them")
+            return page
+
+        try:
+            nr = constants.db_handler.number_of_admins(vaultid)
+            assert nr == 1
+        except AssertionError:
+            reporter.add_failure(22, "try to leave vault as last admin",
+                                 "Expected only {} to be the only admin in {}".format(username, vaultname),
+                                 "Found that there were {} admins in {} in total".format(nr, vaultname))
+            return page
+        try:
+            assert page.leave_vault(userid,vaultid)
+        except AssertionError:
+            reporter.add_failure(22, "try to leave vault as last admin",
+                                 "Expected to be able to go through the entire leave-vault procedure for vault {}".format(
+                                     vaultname), "Failed to do so")
+            return page
+
+        try:
+            assert page.verify_on_vaults_page()
+        except AssertionError:
+
+            reporter.add_failure(22, "try to leave vault as last admin", "Expected to be on vaults page","Could not verify this")
+            return page
+
+        try:
+            assert page.driver.find_element_by_id("errorwindow").text == "Last admin cannot be deleted - all object will be lost forever"
+        except AssertionError:
+            reporter.add_failure(22, "try to leave vault as last admin", "Expected to find error message on page", "Could not")
+            return page
+
+        try:
+            assert constants.db_handler.number_of_admins(vaultid) == 1
+            assert constants.db_handler.get_user_vault_membership(userid,vaultid).has_admin()
+        except AssertionError:
+            reporter.add_failure(22, "try to leave vault as last admin",
+                         "Expected {} to remain the only admin member of {}".format(username, vaultname),
+                         "could not verify this")
+            return page
+        reporter.add_success(22, "try to leave vault as last admin","Tried to leave vault {} as last admin member {} - leaving vault function did not go through, as expected".format(vaultname,username))
+        return page
+
 
 
 
