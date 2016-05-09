@@ -64,10 +64,14 @@ Scenario: admin smoke
   When "test_admin" deletes object "v_test_object_2" in vault "v_test_vault_2"
   Then log event object "v_test_object_2" in vault "v_test_vault_2" deleted by "test_admin"
 
+  When "test_admin" tries to delete non-empty vault "v_test_vault_2"
+  Then vault "v_test_vault_2" is in the list of vaults
+
 
 @item
 Scenario: test set
   Given I am on loginpage
   And I login as "test_admin"
-  When "test_admin" tries to delete non-empty vault "v_test_vault_2"
-  Then vault "v_test_vault_2" is in the list of vaults
+  And user "test_admin" is the only admin in "v_test_vault_2"
+  When user "test_admin" tries to leave vault "v_test_vault_2" as the last admin
+  Then user "test_admin" is the only admin in "v_test_vault_2"

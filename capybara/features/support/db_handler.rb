@@ -84,6 +84,32 @@ class Db_handler
     end
   end
 
+  def count_members_of_vault(vaultid,priv=nil)
+    query = "select status from ss_groupkeys where groupid=#{vaultid}"
+    count = 0
+    execute_query(query).each do |row|
+      if row.nil?
+        return false
+      end
+      if priv.nil?
+        count +=1
+      elsif priv == 'admin'
+        if Db_status.new(row[0]) .has_admin
+          count  +=1
+        end
+      elsif priv == 'write'
+        if Db_status.new(row[0]) .has_write
+          count  +=1
+        end
+      elsif priv == 'read'
+        if Db_status.new(row[0]) .has_read
+          count  +=1
+        end
+      end
+    end
+    return count
+  end
+
   def get_newest_item_id(vaultid,objectname)
     execute_query("select id,status from ss_objects where groupid = #{vaultid} and objectname='#{objectname}'").each do |row|
       if Db_status.new(row[1]) .is_active

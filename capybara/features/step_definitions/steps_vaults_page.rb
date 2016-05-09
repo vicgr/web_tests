@@ -102,7 +102,18 @@ When(/^"([^"]*)" tries to delete non\-empty vault "([^"]*)"$/) do |username, vau
   assert C_Support.get_db_handler.count_objects_in_vault(vaultid) > 0 , "Expected to find objects in vault #{vaultname}, but could not"
   assert Page_vaults.delete_vault(vaultid), "Expected to be able to complete delete vault procedure steps, but it failed"
   assert Page_vaults.verify_delete_vault_failed(vaultid),"Could not verify that the vault deletion of #{vaultname} failed!"
+end
 
+When(/^user "([^"]*)" tries to leave vault "([^"]*)" as the last admin$/) do |username, vaultname|
+  #assumes user is member of vault verified
+  #assumes user is admin in vault verified
 
+  userid = C_Support.get_user_id(username)
+  vaultid = C_Support.get_vault_id(vaultname)
+  assert C_Support.get_db_handler.count_members_of_vault(vaultid,'admin') == 1
 
+  assert Page_vaults.isAtVaultsPage()
+
+  assert Page_vaults.leave_vault(userid,vaultid),"Expected to be able to complete the leave vault procedure, but it failed"
+  assert Page_vaults.verify_leave_vault_failed(vaultid),"Could not verify that the leave-vault procedure failed!"
 end

@@ -160,6 +160,15 @@ class Page_vaults < Page_logged_in
     return true
   end
 
+  def self.leave_vault(userid,vaultid)
+    #assumes user is member of vault
+    self.openVault(vaultid)
+    click_button "bar#{vaultid}users2"
+    click_button "btnid#{userid}"
+    page.driver.browser.switch_to.alert .accept
+    return true
+  end
+
   def self.verify_delete_vault_failed(vaultid)
 
     val1 = self.isAtVaultsPage()
@@ -167,6 +176,12 @@ class Page_vaults < Page_logged_in
     val3 = self.isVaultInList(vaultid)
 
     return val1 && val2 && val3
+  end
+
+  def self.verify_leave_vault_failed(vaultid)
+    val1 = self.isAtVaultsPage()
+    val2 = find_by_id('errorwindow').text == "Last admin cannot be deleted - all object will be lost forever"
+    val3 = self.isVaultInList(vaultid)
   end
 
 end
