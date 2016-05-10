@@ -17,6 +17,11 @@ ${button delete}    id=delete_
 ${id bar}         id=bar
 ${edit}           edit
 ${errorwindow}    id=errorwindow
+${v_usrs}         users2
+${waitwindow}     id=waitwindow
+${usr tbl}        id=usertable
+${error last admin leave vault}    Last admin cannot be deleted - all object will be lost forever
+${btnid}          id=btnid
 
 *** Keywords ***
 verify on vaults page
@@ -157,3 +162,31 @@ Delete Object
     ${userid}=    Get User Id    ${username}
     ${bool}=    Audit Event Object Deleted    ${userid}    ${vaultid}    ${objectname}
     Should Be True    ${bool}
+
+Try to Leave Vault as Last Admin
+    [Arguments]    ${username}    ${vaultname}
+    ${userid}=    Get User Id    ${username}
+    ${vaultid}=    Get Vault Id By Name    ${vaultname}
+    ${bool}=    Verify Admin Member Of Vault    ${userid}    ${vaultid}
+    Should Be True    ${bool}    Could not verify that ${username} is an admin level member of ${vaultname}
+    ${vaultmems}=    Count members of Vault    ${vaultid}    admin
+    Should Be Equal As Integers    ${vaultmems}    1    Could not verify that ${username} is the only admin in ${vaultname}
+    ${bool}=    Leave Vault    ${userid}    ${vaultid}
+    Should Be True    ${bool}    Could not verify that the leave-vault function has been completed
+    ${bool}=    Verify Admin Member Of Vault    ${userid}    ${vaultid}
+    Should Be True    ${bool}    Could not verify that ${username} is still an admin level member of ${vaultname}
+    Should Be Equal As Integers    ${vaultmems}    1    Could not verify that ${username} is still the only admin in ${vaultname}
+    ${bool}=    Leave Vault    ${userid}    ${vaultid}
+    verify on vaults page
+    ${error}=    Get Text    ${errorwindow}
+    Should Be Equal    ${error}    ${error last admin leave vault}    The displayed error is missing, or not correct
+
+Leave Vault
+    [Arguments]    ${userid}    ${vaultid}
+    Open Vault by Id    ${vaultid}
+    Click Button    ${id bar}${vaultid}${v_usrs}
+    Wait Until Element Is Visible    ${usr tbl}
+    Click Button    ${btnid}${userid}
+    Confirm Action
+    Wait Until Element Is Not Visible    ${waitwindow}
+    Return From Keyword    ${True}

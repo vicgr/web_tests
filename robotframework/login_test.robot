@@ -75,3 +75,9 @@ try to delete nonempty vault
     [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
     Try to Delete non-empty Vault    test_admin    v_test_vault_2
+
+try to leave vault as last admin
+    [Documentation]    open browser | ${url base} | browser=ff
+    [Setup]    open browser    ${url base}    browser=ff
+    login to storedsafe    test_admin
+    Try to Leave Vault as Last Admin    test_admin    v_test_vault_2

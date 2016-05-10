@@ -1,6 +1,7 @@
 import storedsafe_file_driver_handler as s_h
 import pymysql.cursors
 import s_db_objects
+from robot.api import logger
 
 l = s_h.get_db_login()
 
@@ -53,6 +54,23 @@ def count_objects_in_vault(vaultid):
     for row in res:
         if s_db_objects.obj_status(row[0]).is_active():
             nr += 1
+    return nr
+
+def count_members_of_vault(vaultid,privilege):
+    nr = 0
+    cursor.execute("select status from ss_groupkeys where groupid = {}".format(vaultid))
+    res = cursor.fetchall()
+    if privilege == 'admin':
+        add = lambda status: status.has_admin()
+    elif privilege == 'write':
+        add = lambda status: status.has_write()
+    elif privilege == 'read':
+        add = lambda status: status .has_read()
+    elif privilege is None:
+        add = lambda val: True
+    for row in res:
+        if add(s_db_objects.obj_status(row[0])):
+            nr+=1
     return nr
 
 def get_object_id_by_name(vaultname, objectname): #gets the _latest_ created _active_ object with that name

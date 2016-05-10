@@ -58,6 +58,9 @@ def get_newvault_info(vaultname):
 def get_vault_id_by_name(vaultname):
     return s_db.get_vault_id_by_name(vaultname)
 
+def count_members_of_vault(vaultid,privilege=None):
+    return s_db.count_members_of_vault(vaultid,privilege)
+
 
 
 #---GET ITEM:SERVER---
