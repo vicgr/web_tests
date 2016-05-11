@@ -4,4 +4,4 @@
 #default: -t @item #--format Fivemat
 #default: -t @item #--format fuubar
 #default: -t @item --format TeamCityFormatter::Formatter
-default: -t @item
+default: -t @admin_smoke

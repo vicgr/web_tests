@@ -7,6 +7,7 @@ class Page_vaults < Page_logged_in
     #verify on a page with a div where id=objectlistwindow
     return has_css?("[id='objectlistwindow']")
   end
+
   def self.isVaultInList(v_id)
     begin
       has_css?("[id = 'bartitle#{v_id}']")
@@ -99,7 +100,10 @@ class Page_vaults < Page_logged_in
       el = find(:css,"[id*=':#{o_id}:']")
       el .click
       decrypted = el.find(:css,"[class='obfuscate']").text
+    else
+      return [false,false]
     end
+
     return decrypted
   end
 
@@ -139,7 +143,6 @@ class Page_vaults < Page_logged_in
     if(objecttype != '8' and objecttype != '9')
       #if enters workbench
       click_button "editbtn##{objectid}"
-      #find("editbtn##{objectid}") .click
     end
     click_button "deletebutton"
     page.driver.browser.switch_to.alert .accept
@@ -169,6 +172,29 @@ class Page_vaults < Page_logged_in
     return true
   end
 
+  def self.delete_all_objects_in_vault(vaultid)
+    #assumes thare are objects in the vault
+    self.isAtVaultsPage()
+    self.openVault(vaultid)
+    nrr = 0
+    begin
+      find(:css,"[id^=table#{vaultid}]")
+    rescue
+    end
+    all(:css,"[id^=checkall_#{vaultid}]").each do |box|
+      box.click
+      nrr+=1
+    end
+    if nrr == 0
+      return true
+    end
+    find(:css, "[id=delete_#{vaultid}]") .click
+    page.driver.browser.switch_to.alert .accept
+
+    return find_by_id('infowindow').text == "Item deleted"
+
+  end
+
   def self.verify_delete_vault_failed(vaultid)
 
     val1 = self.isAtVaultsPage()
@@ -178,10 +204,20 @@ class Page_vaults < Page_logged_in
     return val1 && val2 && val3
   end
 
+  def self.verify_delete_vault_succeded(vaultid)
+    #val1= self.isAtVaultsPage()
+    val2=find_by_id('infowindow').text .include?("Vault deleted")
+    val3=page.has_no_css?("[id=bar#{vaultid}]")
+    return val2 && val3
+
+  end
+
   def self.verify_leave_vault_failed(vaultid)
-    val1 = self.isAtVaultsPage()
+    #val1 = self.isAtVaultsPage()
     val2 = find_by_id('errorwindow').text == "Last admin cannot be deleted - all object will be lost forever"
     val3 = self.isVaultInList(vaultid)
-  end
+
+    return val2 && val3
+
 
 end

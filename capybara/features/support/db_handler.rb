@@ -142,6 +142,16 @@ class Db_handler
     return nr
   end
 
+  def get_all_active_object_names_in_vault(vaultid)
+    objs = Array.new
+    execute_query("select objectname,status from ss_objects where groupid = #{vaultid}").each do |row|
+      if Db_status.new(row[1]) .is_active()
+        objs <<row[0]
+      end
+    end
+    return objs
+  end
+
   def auditlog_verify_login(userid) ##Verifies that _any_ login event has happened for the user _after_ @starttime!
     execute_log_query("select id from ss_log where event like '%LOGIN%' and userid = #{userid}").each do |row|
       return row
@@ -164,8 +174,7 @@ class Db_handler
   end
 
   def auditlog_verify_item_creation(userid,vaultid,objectid)
-    #execute_log_query
-    execute_query("select * from ss_log where userid=#{userid} and groupid=#{vaultid} and objectid=#{objectid} and event like '%OBJECT CREATED%'").each do |row|
+    execute_log_query("select * from ss_log where userid=#{userid} and groupid=#{vaultid} and objectid=#{objectid} and event like '%OBJECT CREATED%'").each do |row|
       return row
     end
     return false
@@ -175,6 +184,14 @@ class Db_handler
     v_id=C_Support.get_db_handler.get_new_vault_id(vaultname)
     execute_log_query("select * from ss_log where userid=#{userid} and groupid = #{v_id} and event like '%VAULT CREATED:#{vaultname}%'").each do |row|
       return row
+    end
+    return false
+  end
+
+  def auditlog_verify_vault_deleted(userid,vaultid,vaultname)
+    query="select id from ss_log where userid = #{userid} and groupid = #{vaultid} and event like '%VAULT DELETED: #{vaultname}%'"
+    execute_log_query(query).each do |row|
+      return row[0]
     end
     return false
   end
@@ -204,7 +221,6 @@ class Db_handler
   end
   def auditlog_verify_object_deleted(userid, vaultid, objectname)
     query = "select id from ss_log where userid=#{userid} and groupid=#{vaultid} and event like '%OBJECT DELETED:#{objectname}%'"
-    print query
     execute_log_query(query).each do |row|
       return row
     end
