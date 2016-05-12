@@ -6,7 +6,7 @@ import storedsafe_driver_values as constants
 
 class vault_tests:
 
-    def create_new_server_item(driver, page, reporter, username, vaultname, itemname):
+    def create_new_server_item(page, reporter, username, vaultname, itemname):
 
         userid = constants.get_user(username)[2]
         vaultid = constants.get_vaultsid(vaultname)
@@ -21,7 +21,7 @@ class vault_tests:
         try:
             assert page.create_new_item_server(vaultname,itemname,newitem)
         except:
-            reporter.add_failure(10, "create new item test", "expected to create a new item", "item creation failed")
+            reporter.add_failure(10, "create new object test", "expected to create a new item", "item creation failed")
             return page
 
         i_id=constants.db_handler.get_new_created_item_in_vault_by_name(itemname, vaultid)
@@ -29,7 +29,7 @@ class vault_tests:
         try:
             assert constants.db_handler.expect_event_item_created(userid,i_id,vaultid)
         except:
-            reporter.add_failure(10, "create new item test", "expected that creation of object "+itemname +" would be logged","objectcreation was not logged")
+            reporter.add_failure(10, "create new object test", "expected that creation of object "+itemname +" would be logged","objectcreation was not logged")
             return page
 
 
@@ -107,7 +107,6 @@ class vault_tests:
 
     def copy_object(page,reporter, username, vault_from,vault_to, objectname):
 
-        #--TODO: for paste object: refactor to reuse code
         try:
             assert page.verify_on_vaults_page()
         except AssertionError:
@@ -345,7 +344,6 @@ class vault_tests:
 
         try:
             assert constants.db_handler.count_objects_in_vault(vaultid) > 0
-            print(constants.db_handler.count_objects_in_vault(vaultid))
         except AssertionError:
             reporter.add_failure(20,"try to delete non-empty vault","expected vault {} to not be empty".format(vaultname),"vault contains no objects")
             return page
@@ -376,8 +374,82 @@ class vault_tests:
                                  vaultname))
         return page
 
+    def delete_vault_with_objects(page, reporter, username, vaultname):
+        #page = page_vaults.PageVaults()
+        try:
+            assert page.verify_on_vaults_page()
+        except AssertionError:
+            reporter.add_failure(19, "delete vault and its content", "could not start, not on the vaults page",
+                                 "initialization unsuccessful")
+            return page
+        try:
+            userid = constants.get_user(username)[2]
+            vaultid = constants.get_vaultsid(vaultname)
+
+            assert constants.db_handler.get_user_vault_membership(userid, vaultid).has_admin()
+        except AssertionError:
+            reporter.add_failure(19, "delete vault and its content",
+                                 "Expected {} to be admin member of {}".format(username, vaultname),
+                                 "Could not verify this")
+            return page
+        except:
+            reporter.add_failure(19, "delete vault and its content",
+                                 "Could not find user {} or vault {} in the database".format(username, vaultname),
+                                 "expected to be able to find them")
+            return page
+
+        #get all object id:s and names [i,n]
+        objects = constants.db_handler.get_all_objects_in_vault(vaultid)
+        #delete all objects in vault
+        if objects:
+            try:
+                assert page.delete_all_objects_in_vault(vaultid)
+            except AssertionError:
+                reporter.add_failure(19, "delete vault and its content","Expected to be able to delete all objects in {}".format(vaultname),"Could not verify this")
+                return page
+            #verify deletion
+            for o in objects:
+                try:
+                    assert constants.db_handler.expect_event_object_deleted(userid,vaultid,o[0],o[1])
+                except AssertionError:
+                    reporter.add_failure(19, "delete vault and its content",
+                                 "Expected to be able to find deletion events for all objects in vault {}".format(vaultname),
+                                         "Could not")
+                    return page
+        #---end if objects
+
+        #Delete vault
+        try:
+            assert page.delete_vault(vaultid)
+        except AssertionError:
+            reporter.add_failure(19, "delete vault and its content",
+                                 "Expected to be able to go through the delete-vault procedure for vault {}".format(
+                                     vaultname), "Could not verify this")
+            return page
+
+        #Verify vault deleted:
+        try:
+            assert page.verify_on_vaults_page()
+            assert page.verify_vault_deleted(vaultid)
+        except AssertionError:
+            reporter.add_failure(19, "delete vault and its content","Expected to be able to verify {} to be deleted".format(vaultname),"could not verify")
+            return page
+
+        #Verify in database
+        try:
+            assert constants.db_handler.expect_event_vault_deleted(userid,vaultid,vaultname)
+        except AssertionError:
+            reporter.add_failure(19, "delete vault and its content",
+                                 "Expected to be able to verify in database that vault {} was deleted".format(
+                                     vaultname), "could not verify")
+            return page
+
+        #Success
+        reporter.add_success(19, "delete vault and its content",
+                             "vault {} and its content has been deleted as expected".format(vaultname))
+        return page
+
     def try_leave_vault_as_last_admin(page, reporter, username, vaultname):
-#        page = page_vaults.PageVaults()
 
         try:
             assert page.verify_on_vaults_page()

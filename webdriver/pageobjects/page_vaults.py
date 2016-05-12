@@ -48,12 +48,17 @@ class PageVaults(PageObject):
         return pageLogin.PageLogin(self.driver)
 
     def close_vault(self,vaultname):
-        id = constants.get_vaultsid(vaultname)
-        for v in self.vault_list:
-            if v.get_attribute('id') == "bartitle{}".format(id):
-                if v.get_attribute('class') == 'bars _on':
-                    v.click()
-                    return
+        try:
+            id = constants.get_vaultsid(vaultname)
+        except KeyError:
+            id = constants.db_handler.get_new_vault_id(vaultname)
+        try:
+            v = self.driver.find_element_by_id("bartitle{}".format(id))
+            if v.get_attribute('class') == 'bars _on':
+                v.click()
+        except:
+            return False
+        return True
 
     def open_vault(self,vaultname):
         try:
@@ -68,12 +73,21 @@ class PageVaults(PageObject):
         return self.open_vault_by_id(id)
 
     def open_vault_by_id(self,vaultid):
+        try:
+            v = self.driver.find_element_by_id("bartitle{}".format(vaultid))
+            if v.get_attribute('class') == 'bars _off':
+                v.click()
+        except:
+            return False
+        return True
+        """
         for v in self.vault_list:
             if v.get_attribute('id') == 'bartitle' + str(vaultid):
                 if v.get_attribute('class') == 'bars _off':
                     v.click()
                 return True
         return False
+        """
 
     def create_new_item_server(self,vaultname,itemname,iteminfo):
         #split in multiple lesser classes to better handle multiple object types
@@ -94,12 +108,15 @@ class PageVaults(PageObject):
             self.driver.find_element_by_id('info').send_keys(iteminfo[4])
             self.driver.find_element_by_id('cryptedinfo').send_keys(iteminfo[5])
             self.driver.find_element_by_id('submitbutton').click()
+            WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.ID, "popupwindow")))
+            WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.ID, "waitwindow")))
         except:
             return False
         return True
 
     def mark_object(self,vaultname, objectname):
         try:
+            self.close_vault(vaultname)
             self.open_vault(vaultname)
             vaultid = constants.get_vaultsid(vaultname)
             try:
@@ -113,8 +130,6 @@ class PageVaults(PageObject):
 
             self.driver.find_element_by_id('mod_{}_{}_{}'.format(vaultid,o_type,o_id)).click()
         except:
-            import sys
-            print(sys.exc_info())
             return False
         return True
 
@@ -187,6 +202,25 @@ class PageVaults(PageObject):
             return False
         return True
 
+    def verify_vault_deleted(self,vaultid):
+        bool1 = False
+        bool2 = False
+        try:
+            text = self.driver.find_element_by_id("infowindow").text
+            if "Vault deleted" in text:
+                bool1 = True
+            try:
+                import selenium.common.exceptions as e
+                self.driver.find_element_by_id("bartitle{}".format(vaultid))
+            except e.NoSuchElementException:
+                bool2 = True
+        except:
+            return False
+
+        return bool1 and bool2
+
+
+
 
     def delete_object(self,vaultid,objectid,objecttype):
         try:
@@ -200,6 +234,22 @@ class PageVaults(PageObject):
             WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.ID, "popupwindow")))
         except:
             return False
+        return True
+
+    def delete_all_objects_in_vault(self,vaultid):
+        try:
+            self.open_vault_by_id(vaultid)
+            tables = self.driver.find_elements(By.CSS_SELECTOR,"[id^=checkall_{}]".format(vaultid))
+            for table in tables:
+                table.click()
+            self.driver.find_element_by_id("delete_{}".format(vaultid)) .click()
+            Alert(self.driver).accept()
+            WebDriverWait(self.driver,10).until(EC.invisibility_of_element_located((By.ID,"waitwindow")))
+        except:
+            import sys
+            print(sys.exc_info())
+            return False
+
         return True
 
     def leave_vault(self,userid,vaultid):

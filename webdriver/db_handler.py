@@ -135,6 +135,17 @@ class DB_handler(object):
                 objs+=1
         return objs
 
+    def get_all_objects_in_vault(self,vaultid):
+        query = "select id,objectname,status from ss_objects where groupid={}".format(vaultid)
+        objs=[]
+        res = self.db_exec.execute_query(query)
+        for row in res:
+            if obj_status(row[2]).is_active():
+                objs.append([row[0],row[1]])
+        if not objs:
+            return False
+        return objs
+
     def number_of_admins(self,vaultid):
         query = "select status from ss_groupkeys where groupid = {}".format(vaultid)
         res = self.db_exec.execute_query(query)
@@ -180,6 +191,11 @@ class DB_handler(object):
     def expect_event_vault_created(self,userid,vaultname):
         vaultid = self.get_new_vault_id(vaultname)
         query = "select * from ss_log where userid ={} and groupid={} and event like '%VAULT CREATED:{}%'".format(userid,vaultid,vaultname)
+        return self.db_exec.execute_log_query(query)
+
+    def expect_event_vault_deleted(self, userid, vaultid, vaultname):
+        query = "select * from ss_log where userid ={} and groupid={} and event like '%VAULT DELETED: {}%'".format(
+            userid, vaultid, vaultname)
         return self.db_exec.execute_log_query(query)
 
     def expect_event_object_decryption(self,userid, v_id, o_id):
