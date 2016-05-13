@@ -61,7 +61,8 @@ def get_vault_id_by_name(vaultname):
 def count_members_of_vault(vaultid,privilege=None):
     return s_db.count_members_of_vault(vaultid,privilege)
 
-
+def get_active_objects_in_vault(vaultid):
+    return s_db.get_active_objects_in_vault(vaultid)
 
 #---GET ITEM:SERVER---
 def item_server_get_host(itemname):

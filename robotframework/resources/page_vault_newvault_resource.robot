@@ -17,6 +17,7 @@ create new vault
     ${vaultinfo}=    get newvault info    ${vaultname}
     click button    ${newvaultbutton}
     focus    ${newvault popup}
+    Wait Until Element Is Visible    ${field info}
     Input Text    ${field name}    ${vaultname}
     Input Text    ${field info}    ${vaultinfo}
     Select From List    ${dropdown policy}    ${vaultpolicy}

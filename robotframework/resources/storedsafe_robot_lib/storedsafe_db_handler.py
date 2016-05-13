@@ -108,6 +108,16 @@ def objects_Should_Be_Similar(vault1,object1,vault2,object2):
         o2= row
     return o1[1]==o2[1] and o1[2]==o2[2] and o1[4]==o2[4] and o1[6]==o2[6] and o1[7]==o2[7] and o1[9]==o2[9] and o1[10]==o2[10]
 
+def get_active_objects_in_vault(vaultid):
+    query = "select id, objectname, status from ss_objects where groupid = {}".format(vaultid)
+    cursor.execute(query)
+    obj_list = []
+    for row in cursor:
+        if s_db_objects.obj_status(row[2]).is_active():
+            obj_list.append([row[0],row[1]])
+    if len(obj_list) == 0:
+        return False
+    return obj_list
 
 def get_next_object_id():
     return

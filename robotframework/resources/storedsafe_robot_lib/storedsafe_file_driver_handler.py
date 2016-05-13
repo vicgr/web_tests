@@ -73,7 +73,12 @@ def get_object_id(objectname):
 def get_object_vault(objectname):
     return objects[objectname][1]
 def get_object_type(objectname):
-    return objects[objectname][2]
+    print(objectname)
+    try:
+        return objects[objectname][2]
+    except KeyError:
+        return False
+
 
 
 

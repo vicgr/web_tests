@@ -1,8 +1,5 @@
 *** Settings ***
-Documentation     A test suite with a single test for valid login.
-...
-...               This test has a workflow that is created using keywords in
-...               the imported resource file.
+Documentation     A smoke test suite for testing vault and object operations for admin users
 Suite Teardown
 Resource          Resources/page_login_resource.robot
 Resource          Resources/page_vaults_resource.robot
@@ -44,22 +41,24 @@ test open browsers
     Open Browser    ${url base}    browser=ie
     close browser
 
-test 3
+create vault test
     [Setup]    open browser    ${url base}
     login to storedsafe    test_admin
     verify on vaults page
     create vault    test_admin    v_test_vault_2
+    [Teardown]    close browser
 
 copy object
     [Setup]    open browser    ${url base}    browser=gc
     login to storedsafe    test_admin
-    ${cont1}=    Decrypt Object Information    test_admin    v_test_vault_1    v_test_object_2
-    audit log object decrypted    test_admin    v_test_vault_1    v_test_object_2
-    Copy Object    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_2
-    audit log object copied    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_2
-    ${cont2}=    Decrypt Object Information    test_admin    v_test_vault_2    v_test_object_2
-    audit log object decrypted    test_admin    v_test_vault_2    v_test_object_2
+    ${cont1}=    Decrypt Object Information    test_admin    v_test_vault_1    v_test_object_1.pdf
+    audit log object decrypted    test_admin    v_test_vault_1    v_test_object_1.pdf
+    Copy Object    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_1.pdf
+    audit log object copied    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_1.pdf
+    ${cont2}=    Decrypt Object Information    test_admin    v_test_vault_2    v_test_object_1.pdf
+    audit log object decrypted    test_admin    v_test_vault_2    v_test_object_1.pdf
     Should Be Equal As Strings    ${cont1}    ${cont2}    Encrypted information of copied objects has changed
+    [Teardown]    close browser
 
 move object
     [Setup]    open browser    ${url base}    browser=gc
@@ -81,3 +80,21 @@ try to leave vault as last admin
     [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
     Try to Leave Vault as Last Admin    test_admin    v_test_vault_2
+
+Delete Vault With Content
+    [Setup]    open browser    ${url base}    browser=ff
+    #login
+    login to storedsafe    test_admin
+    #verify login
+    #Verify admin member of vault
+    #get number of objects in vault
+    #if nr>0, run delete all objects
+    #..verify object deletion
+    Empty Vault    test_admin    v_test_vault_2
+    #delete vault
+    Delete Empty Vault    test_admin    v_test_vault_2
+    #verify vault deletion
+
+lll
+    [Setup]    open browser    ${url base}    browser=ff
+    login to storedsafe    test_admin

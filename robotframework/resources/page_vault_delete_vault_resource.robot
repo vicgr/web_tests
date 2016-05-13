@@ -7,6 +7,7 @@ Resource          page_vaults_resource.robot
 ${edit vault popup}    id=popupwindow
 ${button delete vault}    id=deletebutton
 ${error delete non empty vault}    Vault cannot be deleted with active items
+${vault deleted msg}    Vault deleted
 
 *** Keywords ***
 Delete Vault
@@ -46,3 +47,18 @@ Try to Delete non-empty Vault
     Should Be True    ${bool}    Could not verify that ${username} still was an admin level member of ${vaultname}
     ${error}=    Get Text    ${errorwindow}
     Should Be Equal    ${error}    ${error delete non empty vault}
+
+Delete Empty Vault
+    [Arguments]    ${username}    ${vaultname}
+    ${userid}=    Get User Id    ${username}
+    ${vaultid}=    Get Vault Id By Name    ${vaultname}
+    ${bool}=    Verify Member Of Vault    ${userid}    ${vaultid}
+    Should Be True    ${bool}    Expected ${username} to be a member of ${vaultname} but could not verify this.
+    ${bool}=    Count Objects In Vault    ${vaultid}
+    Should Not Be True    ${bool}    Expected vault to be empty, but found objects in it.
+    ${bool}=    Delete Vault    ${userid}    ${vaultid}
+    Should Be True    ${bool}    Could not perform the delete vault function
+    ${bool}=    Get Vault Id By Name    ${vaultname}
+    Should Not Be True    ${bool}
+    ${text}=    Get Text    ${infowindow}
+    Should Contain    ${text}    ${vault deleted msg}

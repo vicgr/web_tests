@@ -4,6 +4,7 @@ Library           storedsafe_robot_lib/storedsafe_lib.py
 Resource          storedsafe_url_resources.robot
 Resource          page_vault_newitem_resource.robot
 Resource          page_vault_newvault_resource.robot
+Library           Collections
 
 *** Variables ***
 ${vault list}     id=objectlistwindow
@@ -22,6 +23,8 @@ ${waitwindow}     id=waitwindow
 ${usr tbl}        id=usertable
 ${error last admin leave vault}    Last admin cannot be deleted - all object will be lost forever
 ${btnid}          id=btnid
+${checkall}       css=[id^=checkall_
+${infowindow}     id=infowindow
 
 *** Keywords ***
 verify on vaults page
@@ -48,9 +51,9 @@ Open Vault by Id
 
 Close Vault
     [Arguments]    ${vaultname}
-    ${vault id}=    Get Vault Id    ${vaultname}
+    ${vault id}=    Get Vault Id By Name    ${vaultname}
     ${class}=    Get Element Attribute    ${vault bar}${vault id}@class
-    Run Keyword Unless    '${class}'=='${vault_open_class}'    Click Element    ${vault bar}${vault id}
+    Run Keyword Unless    '${class}'=='${vault_closed_class}'    Click Element    ${vault bar}${vault id}
     ${class}=    Get Element Attribute    ${vault bar}${vault id}@class
     Should Be Equal As Strings    ${class}    ${vault_closed_class}
 
@@ -93,6 +96,8 @@ Copy Object
     ${id to}=    Get Vault Id By Name    ${vault to}
     ${bool}=    Get Object Id By Name    ${vault from}    ${objectname}
     Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault from}
+    Close Vault    ${vault from}
+    Close Vault    ${vault to}
     Open Vault by Id    ${id from}
     Open Vault by Id    ${id to}
     ${object id}=    Get Object Id By Name    ${vault from}    ${objectname}
@@ -102,12 +107,8 @@ Copy Object
     Click Element    ${button copy}${id from}
     Click Element    ${button paste}${id to}
     Confirm Action
-    ${userid}=    Get User Id    ${user}
-    ${bool}=    Audit Event Object Copied    ${userid}    ${id from}    ${id to}    ${object id}
-    Should Be True    ${bool}    could not find audit log event of moving object ${objectname}
-    Log    gonna wait for waitwindow
     Wait Until Element Is Not Visible    id=waitwindow
-    Log    done waiting
+    ${userid}=    Get User Id    ${user}
     Wait Until Element Contains    id=bar${id to}    ${objectname}
     ${bool}=    Get Object Id By Name    ${vault to}    ${objectname}
     Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault to}
@@ -118,6 +119,8 @@ Decrypt Object Information
     [Arguments]    ${username}    ${vaultname}    ${objectname}
     Wait Until Element Is Not Visible    waitwindow    10
     Open Vault by Name    ${vaultname}
+    ${type}=    Get Object Type    ${objectname}
+    Return From Keyword If    ${type}==2 or ${type}==3 or ${type}==5 or ${type}==7    ${False}
     ${object id}=    Get Object Id By Name    ${vaultname}    ${objectname}
     Wait Until Page Contains Element    xpath=//*[contains(@id,":${object id}:")]
     Click Element    xpath=//*[contains(@id,":${object id}:")]
@@ -131,6 +134,8 @@ Move Object
     ${id to}=    Get Vault Id By Name    ${vault to}
     ${bool}=    Get Object Id By Name    ${vault from}    ${objectname}
     Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault from}
+    Close Vault    ${vault from}
+    Close Vault    ${vault to}
     Open Vault by Id    ${id from}
     Open Vault by Id    ${id to}
     ${object id}=    Get Object Id By Name    ${vault from}    ${objectname}
@@ -190,3 +195,28 @@ Leave Vault
     Confirm Action
     Wait Until Element Is Not Visible    ${waitwindow}
     Return From Keyword    ${True}
+
+Empty Vault
+    [Arguments]    ${username}    ${vaultname}
+    [Documentation]    Deletes all objects in a vault and verifies that they have been deleted (if any)
+    ${userid}=    Get User Id    ${username}
+    ${vaultid}=    Get Vault Id By Name    ${vaultname}
+    @{objlist}=    Get Active Objects In Vault    ${vaultid}
+    Run Keyword Unless    ${objlist}==${False}    Delete all Objects in Vault    ${vaultid}
+    : FOR    ${object}    IN    @{objlist}
+    \    ${name}=    Get From List    ${object}    1
+    \    Audit Event Object Deleted    ${userid}    ${vaultid}    ${name}
+
+Delete all Objects in Vault
+    [Arguments]    ${vaultid}
+    [Documentation]    Deletes all objects in the vault with the provided id.
+    ...    Opens it, checks the boxes and clicks the delete button.
+    ...    Accepts the alert.
+    ...    Returns true
+    Open Vault by Id    ${vaultid}
+    Wait Until Element Is Not Visible    ${waitwindow}
+    @{checkboxes}=    Get Webelements    ${checkall}${vaultid}]
+    : FOR    ${box}    IN    @{checkboxes}
+    \    Select Checkbox    ${box}
+    Click Element    ${button delete}${vaultid}
+    Confirm Action
