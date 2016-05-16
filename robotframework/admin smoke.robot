@@ -19,25 +19,22 @@ login logout test
     login to storedsafe    test_admin
     is logged in as    test_admin
     verify on vaults page
-    Audit Event Login    test_admin
-    logout user from storedsafe    test_admin
-    verify on login page
-    Audit Event Logout    test_admin
     [Teardown]    close browser
 
 Create object in vault test
-    [Documentation]    ${v}= verify object in vault v_test_vault_1 v_test_object_2
     [Setup]    open browser    ${url base}
     login to storedsafe    test_admin
     ${userid}=    Get User Id    test_admin
     ${vaultid}=    Get Vault Id By Name    v_test_vault_2
     ${v}=    verify member of vault    ${userid}    ${vaultid}
     Should Be True    ${v}
-    Open Vault    v_test_vault_2
+    Open Vault by Name    v_test_vault_2
     New Server Item In Vault    v_test_vault_2    v_test_object_2
-    ${v}=    get object id by name    v_test_vault_1    v_test_object_2
+    Wait Until Page Contains    v_test_object_2
+    ${v}=    get object id by name    v_test_vault_2    v_test_object_2
     Should Be True    ${v}
     audit log object created    test_admin    v_test_vault_2    v_test_object_2
+    [Teardown]
 
 test open browsers
     Open Browser    ${url base}    browser=gc
@@ -103,3 +100,7 @@ Delete Vault With Content
 lll
     [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
+
+try
+    ${v}=    get object id by name    v_test_vault_2    v_test_object_2
+    Should Be True    ${v}

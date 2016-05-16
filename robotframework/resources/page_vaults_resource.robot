@@ -59,14 +59,14 @@ Close Vault
 
 New Server Item In Vault
     [Arguments]    ${name of vault}    ${item name}
-    Open Vault    ${name of vault}
-    ${vault id}=    Get Vault Id    ${name of vault}
+    Open Vault by Name    ${name of vault}
+    ${vault id}=    Get Vault Id By Name    ${name of vault}
     Click Button    bar${vaultid}add
     Wait Until Element Is Visible    ${newitem popup}
-    Focus    ${newitem popup}
+    Wait Until Element Is Visible    ${radio server}
     Click Element    ${radio server}
     Click Button    ${newitem continue}${vault id}
-    Focus    ${newitem popup}
+    Wait Until Element Is Visible    ${newitem host}
     ${host}=    item server get host    ${item name}
     ${username}=    item server get username    ${item name}
     ${alert}=    item server get alert    ${item name}
@@ -81,6 +81,7 @@ New Server Item In Vault
     Input Text    ${newitem info}    ${info}
     Input Text    ${newitem sensitive info}    ${sens info}
     Click Button    ${newitem submit}
+    Wait Until Element Is Not Visible    ${newitem popup}
 
 Create Vault
     [Arguments]    ${username}    ${vaultname}

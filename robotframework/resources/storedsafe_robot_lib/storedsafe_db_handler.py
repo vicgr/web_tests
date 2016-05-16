@@ -74,9 +74,12 @@ def count_members_of_vault(vaultid,privilege):
     return nr
 
 def get_object_id_by_name(vaultname, objectname): #gets the _latest_ created _active_ object with that name
+
     v_id = s_h.get_vault_id(vaultname)
+
     if not v_id:
         v_id = get_vault_id_by_name(vaultname)
+
         if not v_id:
             return False
     query = "select id, status from ss_objects where groupid = {} and objectname = '{}' order by id desc".format(v_id, objectname)
@@ -147,6 +150,8 @@ def audit_event_logout(user):
 def audit_event_object_created(username,vaultname,objectname):
     u_id = s_h.get_user_id(username)
     v_id = s_h.get_vault_id(vaultname)
+    if not v_id:
+        v_id = get_vault_id_by_name(vaultname)
     o_id = get_object_id_by_name(vaultname,objectname)
     if not v_id or not u_id or not o_id:
         return False
