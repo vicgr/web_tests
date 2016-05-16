@@ -13,27 +13,31 @@ Resource          Resources/page_vault_delete_vault_resource.robot
 *** Variables ***
 
 *** Test Cases ***
-test1
+login logout test
     [Setup]    open browser    ${url base}
     verify on login page
     login to storedsafe    test_admin
     is logged in as    test_admin
     verify on vaults page
+    Audit Event Login    test_admin
     logout user from storedsafe    test_admin
     verify on login page
-    [Teardown]
+    Audit Event Logout    test_admin
+    [Teardown]    close browser
 
-test2
+Create object in vault test
     [Documentation]    ${v}= verify object in vault v_test_vault_1 v_test_object_2
     [Setup]    open browser    ${url base}
     login to storedsafe    test_admin
-    ${v}=    verify member of vault    test_admin    v_test_vault_1
+    ${userid}=    Get User Id    test_admin
+    ${vaultid}=    Get Vault Id By Name    v_test_vault_2
+    ${v}=    verify member of vault    ${userid}    ${vaultid}
     Should Be True    ${v}
-    Open Vault    v_test_vault_1
-    New Server Item In Vault    v_test_vault_1    v_test_object_2
+    Open Vault    v_test_vault_2
+    New Server Item In Vault    v_test_vault_2    v_test_object_2
     ${v}=    get object id by name    v_test_vault_1    v_test_object_2
     Should Be True    ${v}
-    audit log object created    test_admin    v_test_vault_1    v_test_object_2
+    audit log object created    test_admin    v_test_vault_2    v_test_object_2
 
 test open browsers
     Open Browser    ${url base}    browser=gc
@@ -46,7 +50,8 @@ create vault test
     login to storedsafe    test_admin
     verify on vaults page
     create vault    test_admin    v_test_vault_2
-    [Teardown]    close browser
+    ${bool}=    Audit Event Vault Created    test_admin    v_test_vault_2
+    [Teardown]
 
 copy object
     [Setup]    open browser    ${url base}    browser=gc

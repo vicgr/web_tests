@@ -93,9 +93,8 @@ def get_vault_id_by_name(vaultname): #gets the id of the latest created (highest
     cursor.execute(query)
     res = cursor.fetchall()
     for row in res:
-        if s_db_objects.obj_status(row[1]) .is_active():
-            return row[0]
-    return
+        return row[0]
+    return False
 
 def objects_Should_Be_Similar(vault1,object1,vault2,object2):
     o_id_1 = get_object_id_by_name(vault1,object1)
