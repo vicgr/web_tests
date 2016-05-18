@@ -8,7 +8,6 @@ When(/^I open vault "([^"]*)"$/) do |vaultname|
   assert Page_vaults.isVaultOpen?(C_Support.get_vault_id(vaultname)), vaultname+" was supposed to be open: it was not"
 end
 
-#Note - this step only work for vaults that exist before testing begins, not newly created vaults
 When(/^"([^"]*)" creates new item "([^"]*)" of type "([^"]*)" in vault "([^"]*)"$/) do |username, itemname, itemtype, vaultname|
 
   vaultid=C_Support.get_vault_id(vaultname)
@@ -143,4 +142,13 @@ Then(/^user "([^"]*)" has deleted vault "([^"]*)"$/) do |username, vaultname|
   $stdout.puts "#{userid},#{vaultid},#{vaultname}"
   assert Page_vaults.verify_delete_vault_succeded(vaultname),"Could not verify that the vault #{vaultname} has been deleted"
   assert C_Support.get_db_handler.auditlog_verify_vault_deleted(userid,vaultid,vaultname),"Could not verify that the auditlog logged the deletion of #{vaultname}"
+end
+
+When(/^I read encrypted information of "([^"]*)" in "([^"]*)" where info should be "([^"]*)"$/) do |objectname, vaultname, info|
+  vaultid = C_Support.get_vault_id(vaultname)
+  objectid = C_Support.get_object_id(vaultid,objectname)
+  assert Page_vaults.isAtVaultsPage()
+  decrypted = Page_vaults.read_encrypted_data(vaultname,objectname)
+  assert info == decrypted, "Could not verify that the decrypted info of #{objectname} is the same as the provided info"
+
 end

@@ -93,7 +93,7 @@ Create Vault
 
 Copy Object
     [Arguments]    ${user}    ${vault from}    ${vault to}    ${objectname}
-    ${id from}=    Get Vault Id    ${vault from}
+    ${id from}=    Get Vault Id By Name    ${vault from}
     ${id to}=    Get Vault Id By Name    ${vault to}
     ${bool}=    Get Object Id By Name    ${vault from}    ${objectname}
     Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault from}
@@ -103,6 +103,7 @@ Copy Object
     Open Vault by Id    ${id to}
     ${object id}=    Get Object Id By Name    ${vault from}    ${objectname}
     ${o type}=    Get Object Type    ${objectname}
+    log    id=mod_${id from}_${o type}_${object id}
     Wait Until Element Is Visible    id=mod_${id from}_${o type}_${object id}
     Select Checkbox    id=mod_${id from}_${o type}_${object id}
     Click Element    ${button copy}${id from}
@@ -131,7 +132,7 @@ Decrypt Object Information
 
 Move Object
     [Arguments]    ${user}    ${vault from}    ${vault to}    ${objectname}
-    ${id from}=    Get Vault Id    ${vault from}
+    ${id from}=    Get Vault Id by name    ${vault from}
     ${id to}=    Get Vault Id By Name    ${vault to}
     ${bool}=    Get Object Id By Name    ${vault from}    ${objectname}
     Should Be True    ${bool}    no active object with name ${objectname} exists in ${vault from}
@@ -147,9 +148,9 @@ Move Object
     Click Element    ${button paste}${id to}
     Confirm Action
     ${userid}=    Get User Id    ${user}
+    Wait Until Element Is Not Visible    id=waitwindow    10
     ${bool}=    Audit Event Object Moved    ${userid}    ${id from}    ${id to}    ${object id}
     Should Be True    ${bool}    could not find audit log event of moving object ${objectname}
-    Wait Until Element Is Not Visible    id=waitwindow    10
 
 Delete Object
     [Arguments]    ${username}    ${vaultname}    ${objectname}

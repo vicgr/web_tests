@@ -59,3 +59,10 @@ Given(/^user "([^"]*)" is the only admin in "([^"]*)"$/) do |username, vaultname
   assert C_Support.get_db_handler.verify_user_is_member_of_vault(userid,vaultid,'admin'),"Expected #{username} to be an admin member of #{vaultname}, but could not verify this"
   assert C_Support.get_db_handler.count_members_of_vault(vaultid,'admin') == 1,"Expected #{username} to be the only admin member of #{vaultname}, but found >1 admins members"
 end
+
+Then(/^log event object "([^"]*)" in vault "([^"]*)" decrypted by "([^"]*)"$/) do |objectname, vaultname, username|
+  userid = C_Support.get_user_id(username)
+  vaultid = C_Support.get_vault_id(vaultname)
+  objectid = C_Support.get_object_id(vaultid,objectname)
+  assert C_Support.get_db_handler.auditlog_verify_object_decryption(userid, vaultid, objectid), "Could not verify #{objectname} in #{vaultname} having been decrypted by #{username} in audit log"
+end

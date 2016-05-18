@@ -58,7 +58,6 @@ Delete Empty Vault
     Should Not Be True    ${bool}    Expected vault to be empty, but found objects in it.
     ${bool}=    Delete Vault    ${userid}    ${vaultid}
     Should Be True    ${bool}    Could not perform the delete vault function
-    ${bool}=    Get Vault Id By Name    ${vaultname}
-    Should Not Be True    ${bool}
+    #verify vault no longer active?
     ${text}=    Get Text    ${infowindow}
     Should Contain    ${text}    ${vault deleted msg}

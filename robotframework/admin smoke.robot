@@ -21,6 +21,20 @@ login logout test
     verify on vaults page
     [Teardown]    close browser
 
+test open browsers
+    Open Browser    ${url base}    browser=gc
+    close browser
+    Open Browser    ${url base}    browser=ie
+    close browser
+
+create vault test
+    [Setup]    open browser    ${url base}
+    login to storedsafe    test_admin
+    verify on vaults page
+    create vault    test_admin    v_test_vault_2
+    ${bool}=    Audit Event Vault Created    test_admin    v_test_vault_2
+    [Teardown]    close browser
+
 Create object in vault test
     [Setup]    open browser    ${url base}
     login to storedsafe    test_admin
@@ -34,24 +48,10 @@ Create object in vault test
     ${v}=    get object id by name    v_test_vault_2    v_test_object_2
     Should Be True    ${v}
     audit log object created    test_admin    v_test_vault_2    v_test_object_2
-    [Teardown]
-
-test open browsers
-    Open Browser    ${url base}    browser=gc
-    close browser
-    Open Browser    ${url base}    browser=ie
-    close browser
-
-create vault test
-    [Setup]    open browser    ${url base}
-    login to storedsafe    test_admin
-    verify on vaults page
-    create vault    test_admin    v_test_vault_2
-    ${bool}=    Audit Event Vault Created    test_admin    v_test_vault_2
-    [Teardown]
+    [Teardown]    close browser
 
 copy object
-    [Setup]    open browser    ${url base}    browser=gc
+    [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
     ${cont1}=    Decrypt Object Information    test_admin    v_test_vault_1    v_test_object_1.pdf
     audit log object decrypted    test_admin    v_test_vault_1    v_test_object_1.pdf
@@ -63,25 +63,29 @@ copy object
     [Teardown]    close browser
 
 move object
-    [Setup]    open browser    ${url base}    browser=gc
+    [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
     Move Object    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_2
+    [Teardown]
 
 delete object
     [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
     Delete Object    test_admin    v_test_vault_2    v_test_object_2
+    [Teardown]
 
 try to delete nonempty vault
     [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
     Try to Delete non-empty Vault    test_admin    v_test_vault_2
+    [Teardown]    close browser
 
 try to leave vault as last admin
     [Documentation]    open browser | ${url base} | browser=ff
     [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
     Try to Leave Vault as Last Admin    test_admin    v_test_vault_2
+    [Teardown]
 
 Delete Vault With Content
     [Setup]    open browser    ${url base}    browser=ff
@@ -96,11 +100,33 @@ Delete Vault With Content
     #delete vault
     Delete Empty Vault    test_admin    v_test_vault_2
     #verify vault deletion
+    audit log vault deleted    test_admin    v_test_vault_2
+    [Teardown]
 
-lll
+read encrypted info
     [Setup]    open browser    ${url base}    browser=ff
     login to storedsafe    test_admin
+    ${val}=    Decrypt Object Information    test_admin    v_test_vault_2    v_test_object_2
+    Should Be Equal    ${val}    JgKU36[:g,7EmWW3gbOR
+    audit log object decrypted    test_admin    v_test_vault_2    v_test_object_2
 
-try
-    ${v}=    get object id by name    v_test_vault_2    v_test_object_2
-    Should Be True    ${v}
+copy object with decryption
+    [Setup]    open browser    ${url base}    browser=ff
+    login to storedsafe    test_admin
+    ${cont1}=    Decrypt Object Information    test_admin    v_test_vault_2    v_test_object_2
+    audit log object decrypted    test_admin    v_test_vault_2    v_test_object_2
+    Copy Object    test_admin    v_test_vault_2    v_test_vault_1    v_test_object_2
+    audit log object copied    test_admin    v_test_vault_2    v_test_vault_1    v_test_object_2
+    ${cont2}=    Decrypt Object Information    test_admin    v_test_vault_1    v_test_object_2
+    audit log object decrypted    test_admin    v_test_vault_1    v_test_object_2
+    Should Be Equal As Strings    ${cont1}    ${cont2}    Encrypted information of copied objects has changed
+
+move object with decryption
+    [Setup]    open browser    ${url base}    browser=ff
+    login to storedsafe    test_admin
+    ${cont1}=    Decrypt Object Information    test_admin    v_test_vault_1    v_test_object_2
+    audit log object decrypted    test_admin    v_test_vault_1    v_test_object_2
+    Move Object    test_admin    v_test_vault_1    v_test_vault_2    v_test_object_2
+    ${cont2}=    Decrypt Object Information    test_admin    v_test_vault_2    v_test_object_2
+    audit log object decrypted    test_admin    v_test_vault_2    v_test_object_2
+    Should Be Equal As Strings    ${cont1}    ${cont2}    Encrypted information of copied objects has changed

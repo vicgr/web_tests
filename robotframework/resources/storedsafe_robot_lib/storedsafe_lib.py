@@ -102,3 +102,6 @@ def audit_event_object_decryption(userid,vaultid,objectid):
 
 def audit_event_object_deleted(userid,vaultid,objectname):
     return s_db.audit_event_object_deleted(userid,vaultid,objectname)
+
+def audit_event_vault_deleted(userid,vaultid,vaultname):
+    return s_db.audit_event_vault_deleted(userid,vaultid,vaultname)

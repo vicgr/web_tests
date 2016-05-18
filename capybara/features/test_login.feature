@@ -42,7 +42,16 @@ Scenario: admin smoke test
 Scenario: test set
   Given I am on loginpage
   And I login as "test_admin"
+  And I should be logged in as "test_admin"
+  And vault "v_test_vault_2" is in the list of vaults
+  When user "test_admin" deletes vault "v_test_vault_2" with any number of objects
+  Then user "test_admin" has deleted vault "v_test_vault_2"
 
-  And I create vault "v_test_vault_2"
-  Then "test_admin" copies object "v_test_object_1.pdf" from "v_test_vault_1" to "v_test_vault_2"
-  And log event object "v_test_object_1.pdf" copied by "test_admin", from "v_test_vault_1" to "test_vault_2"
+
+
+
+
+
+  #And I create vault "v_test_vault_2"
+  #Then "test_admin" copies object "v_test_object_1.pdf" from "v_test_vault_1" to "v_test_vault_2"
+  #And log event object "v_test_object_1.pdf" copied by "test_admin", from "v_test_vault_1" to "test_vault_2"

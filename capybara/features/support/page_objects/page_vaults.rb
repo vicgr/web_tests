@@ -218,6 +218,7 @@ class Page_vaults < Page_logged_in
     val3 = self.isVaultInList(vaultid)
 
     return val2 && val3
+  end
 
 
 end
