@@ -14,7 +14,7 @@ Resource          Resources/page_vault_delete_vault_resource.robot
 
 *** Test Cases ***
 login logout test
-    [Setup]    open browser    ${url base}
+    [Setup]    open browser    ${url base}    browser=gc
     verify on login page
     login to storedsafe    test_admin
     is logged in as    test_admin

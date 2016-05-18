@@ -4,11 +4,14 @@ from selenium import webdriver
 import test_reporter
 import storedsafe_driver_values as constants
 from test_login import login_test
+import time
+
 import sys
 
 
 def selenium_testing():
     tested = False
+    start = time.perf_counter()
     if sys.argv.__contains__('-ff'):
         test_ff()
         tested = True
@@ -20,8 +23,10 @@ def selenium_testing():
         test_ie()
     if tested is False:
         test_ff()
+    extime=time.perf_counter()-start
 
     end_tests()
+    print("time: {}".format(extime))
 
 #---SETUP DRIVERS---
 
