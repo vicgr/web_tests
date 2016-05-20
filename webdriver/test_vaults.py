@@ -267,6 +267,7 @@ class vault_tests:
         except KeyError:
             v_id = constants.db_handler.get_new_vault_id(vaultname)
             o_id=constants.db_handler.get_new_created_item_in_vault_by_name(objectname,v_id)
+        print("v:{}, o:{}".format(v_id,o_id))
         data = page.get_encrypted_data(v_id,o_id)
         if reporter is not None and userid is not None:
             try:

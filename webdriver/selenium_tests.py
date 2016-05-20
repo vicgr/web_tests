@@ -36,7 +36,6 @@ def test_ff():
 
 def test_ch():
     chrome_path = constants.path_base+constants.path_chrome_exec
-    print(chrome_path)
     driver = webdriver.Chrome(executable_path=chrome_path)
     run_tests(driver)
 
@@ -62,10 +61,16 @@ def run_tests(driver):
         print("Warning: Something went wrong. Is not at the login page.")
         quit(1)
 
+    from test_vaults import vault_tests
+
     page = login_test.logintest(driver, page, reporter, username='test_admin')
-"""
-    import test_vaults
-    test_vaults.vault_tests.create_new_vault(page,reporter,'test_admin','v_test_vault_2')
+    vault_tests.delete_vault_with_objects(page,reporter,'test_admin','v_test_vault_2')
+
+
+
+
+    """
+    page = vault_tests.create_new_vault(page,reporter,'test_admin','v_test_vault_2')
     test_vaults.vault_tests.open_vault(page,'v_test_vault_1')
     test_vaults.vault_tests.create_new_server_item(page,reporter,'test_admin','v_test_vault_1','v_test_object_2')
     #page = test_vaults.vault_tests.read_data(page, reporter, 'test_admin', 'v_test_vault_1', 'v_test_object_2')

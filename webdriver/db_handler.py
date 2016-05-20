@@ -118,11 +118,12 @@ class DB_handler(object):
     #    return self.db_exec.execute_query(query)[0][0]
 
     def get_new_vault_id(self,vaultname):
-        query = "select id, status from ss_groups where groupname = '{}' order by id desc".format(vaultname)
+        query = "select id from ss_groups where groupname = '{}' order by id desc".format(vaultname)
         res = self.db_exec.execute_query(query)
         for row in res:
-            if obj_status(row[1]).is_active():
-                return row[0]
+
+            return row[0]
+
         return False
 
     def count_objects_in_vault(self, vaultid):
