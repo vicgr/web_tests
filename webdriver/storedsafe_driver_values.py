@@ -48,9 +48,11 @@ for obj in l:
 
 db_handler = DB_handler(login[0],login[1],login[2],login[3],True)
 
+#hämta användare -> array [password, otp, user id]
 def get_user(username):
     return userlogins[username]
 
+###---inte relevant
 def get_vaultsid(vaultname):
     try:
         return vaults[vaultname]
@@ -68,6 +70,9 @@ def get_object(objectname):
 
 def get_object_type(objectname):
     return object_types[objectname]
+#----
+
+
 
 #url constants
 url_base = "https://t1.storedsafe.com/"
@@ -77,12 +82,3 @@ url_index = "index.php"
 
 #text and other assorted constants
 text_loginbutton = "Login to Storedsafe"
-
-#Check-values that are necessary for ensuring that the tests can continue (unused)
-check_login = False
-check_login_fail = False
-
-
-def reset_all_checks():
-    check_login = False
-    check_login_fail = False
