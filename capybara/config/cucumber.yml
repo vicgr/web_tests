@@ -1,7 +1,5 @@
 # config/cucumber.yml
 ##YAML Template
 ---
-default: -t @item #--format Fivemat
-#default: -t @item #--format fuubar
-#default: -t @item --format TeamCityFormatter::Formatter
+default: -t @usability_test
 #default: -t @admin_smoke

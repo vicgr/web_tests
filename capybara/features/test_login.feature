@@ -47,11 +47,7 @@ Scenario: test set
   When user "test_admin" deletes vault "v_test_vault_2" with any number of objects
   Then user "test_admin" has deleted vault "v_test_vault_2"
 
-
-
-
-
-
+  
   #And I create vault "v_test_vault_2"
   #Then "test_admin" copies object "v_test_object_1.pdf" from "v_test_vault_1" to "v_test_vault_2"
   #And log event object "v_test_object_1.pdf" copied by "test_admin", from "v_test_vault_1" to "test_vault_2"
