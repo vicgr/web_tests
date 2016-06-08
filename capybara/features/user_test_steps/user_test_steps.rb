@@ -1,3 +1,5 @@
+#fungerar som funktioner; kan ha kod mellan deklarationen och end
+
 Given(/^I am on the login page$/) do
 
 end
